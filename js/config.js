@@ -1,7 +1,8 @@
 // ===== แก้ค่าในไฟล์นี้ไฟล์เดียว ให้ตรงกับระบบของโรงเรียน =====
 const CONFIG = {
   // URL ของ Edge Function (Supabase > Edge Functions > api > คัดลอก URL)
-  API_URL: "https://YOUR-PROJECT-REF.supabase.co/functions/v1/api",
+  //API_URL: "https://YOUR-PROJECT-REF.supabase.co/functions/v1/api",
+  API_URL: "https://qjmzykwpyuumhydqulzz.supabase.co/functions/v1/clever-endpoint",
 
   // LIFF ID ของแต่ละหน้า (LINE Developers > LINE Login channel > LIFF)
   LIFF_STUDENT: "2012092632-OHiXnQg3",
