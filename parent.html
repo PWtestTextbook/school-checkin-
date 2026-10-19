@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ผู้ปกครอง</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+<header>ข้อมูลบุตรหลาน <small data-school></small></header>
+<main>
+  <!-- ผูกบัญชี -->
+  <section id="secLink" class="card hidden">
+    <h2>ผูกบัญชี LINE กับบุตรหลาน</h2>
+    <p class="muted">กรอกรหัส 8 ตัวที่ได้รับจากครูที่ปรึกษา เมื่อผูกแล้ว ท่านจะได้รับแจ้งเตือนทาง LINE เมื่อบุตรหลานมาสาย ยังไม่มาเรียน หรือถูกบันทึกพฤติกรรม</p>
+    <label for="code">รหัสผูกบัญชี</label>
+    <input id="code" maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="เช่น AB7K-9QXZ" style="letter-spacing:.15em;text-transform:uppercase">
+    <label for="relation">ความเกี่ยวข้องกับนักเรียน</label>
+    <select id="relation"><option>บิดา</option><option>มารดา</option><option>ผู้ปกครอง</option><option>ปู่/ย่า/ตา/ยาย</option><option>ญาติ</option></select>
+    <label class="check-item" style="color:var(--text)"><input type="checkbox" id="agree"> ข้าพเจ้าเป็นผู้ปกครองของนักเรียน และยินยอมให้โรงเรียนส่งข้อมูลการมาเรียนและพฤติกรรมของนักเรียนถึงบัญชี LINE นี้</label>
+    <button id="btnLink">ผูกบัญชี</button>
+    <button id="btnLinkCancel" class="secondary hidden">กลับ</button>
+  </section>
+
+  <!-- ข้อมูลบุตรหลาน -->
+  <section id="secHome" class="hidden">
+    <div class="card" id="friendBox">
+      <b>รับแจ้งเตือนในแชต LINE ของโรงเรียน</b>
+      <p class="muted" style="margin:4px 0 0">ข้อความแจ้งเตือนจะส่งจาก LINE OA ของโรงเรียน หากยังไม่ได้เพิ่มเพื่อน ระบบจะส่งข้อความถึงท่านไม่ได้</p>
+      <a class="btn" id="btnFriend" style="text-align:center;text-decoration:none" target="_blank" rel="noopener">เพิ่มเพื่อน LINE OA ของโรงเรียน</a>
+    </div>
+    <div id="kids"></div>
+    <button id="btnAdd" class="secondary">+ ผูกบัญชีกับบุตรหลานอีกคน</button>
+  </section>
+</main>
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script src="js/config.js"></script>
+<script src="js/common.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const e = App.esc;
+let displayName = "";
+
+(async () => {
+  try {
+    await App.init(CONFIG.LIFF_PARENT);
+    try { displayName = (await liff.getProfile()).displayName; } catch { /* ไม่บังคับ */ }
+    $("btnFriend").href = `https://line.me/R/ti/p/${encodeURIComponent(CONFIG.LINE_OA_ID)}`;
+    const q = new URLSearchParams(location.search).get("code");
+    if (q) $("code").value = q;
+    await load(!!q);
+  } catch (err) { App.alert(err.message); }
+})();
+
+function showLink(canCancel) {
+  $("secHome").classList.add("hidden"); $("secLink").classList.remove("hidden");
+  $("btnLinkCancel").classList.toggle("hidden", !canCancel);
+}
+
+const STATUS_CLS = { "ปกติ": "ok", "สาย": "late", "ขาด": "absent", "ยังไม่ลงเวลา": "absent" };
+const dShort = (iso) => new Date(iso + "T00:00:00").toLocaleDateString("th-TH", { weekday: "short", day: "numeric" });
+
+async function load(preferLink) {
+  App.loading("กำลังโหลดข้อมูล...");
+  const r = await App.api("parent.me");
+  App.close();
+  if (!r.children.length || preferLink) return showLink(r.children.length > 0);
+  $("secLink").classList.add("hidden"); $("secHome").classList.remove("hidden");
+  $("kids").innerHTML = r.children.map((c) => `
+    <div class="card">
+      <h2 style="margin-bottom:2px">${e(c.name)}</h2>
+      <p class="muted" style="margin:0 0 10px">ชั้น ม.${e(c.classroom)} เลขที่ ${c.number} · ${e(r.semesterLabel)}</p>
+      ${c.today ? `<div class="big-status"><span class="badge ${STATUS_CLS[c.today.status] || ""}">วันนี้: ${e(c.today.status)}${c.today.in ? ` ${e(c.today.in)} น.` : ""}</span>
+        ${c.today.out ? `<span class="muted"> · กลับ ${e(c.today.out)} น.</span>` : ""}</div>` : `<p class="muted">วันนี้ไม่ใช่วันเรียน</p>`}
+      <div class="stat-grid" style="margin-top:10px">
+        <div><b>${c.stats.present}</b><span>วันมาปกติ</span></div>
+        <div><b>${c.stats.late}</b><span>วันมาสาย</span></div>
+        <div><b>${c.stats.absent}</b><span>วันขาด/ไม่ลงเวลา</span></div>
+      </div>
+      <p class="muted" style="margin:10px 0 4px">7 วันเรียนล่าสุด</p>
+      <div class="week7">${c.recent.map((d) => `<div><small>${dShort(d.date)}</small><span class="badge ${STATUS_CLS[d.status] || ""}">${e(d.status || "–")}</span></div>`).join("")}</div>
+      ${c.conduct ? `<div class="sub-box"><b>คะแนนความประพฤติ ${c.conduct.score}/${c.conduct.base}</b> <span class="muted">(${e(c.conduct.periodLabel)} · ถูกตัด ${c.conduct.count} ครั้ง)</span>
+        ${c.conduct.recent.map((l) => `<div class="muted">${new Date(l.at).toLocaleDateString("th-TH", { day: "numeric", month: "short" })} ${e(l.title)} <b class="pts">−${l.points}</b></div>`).join("")}</div>` : ""}
+      ${c.service ? `<div class="sub-box"><b>กิจกรรมเพื่อสังคมฯ</b> ภาคเรียนนี้ ${c.service.semesterHours} ชม. · สะสม ${c.service.totalHours} ชม.</div>` : ""}
+      <button class="secondary small-btn" data-unlink="${e(c.studentId)}">ยกเลิกการรับแจ้งเตือนของนักเรียนคนนี้</button>
+    </div>`).join("");
+  $("kids").querySelectorAll("[data-unlink]").forEach((b) => (b.onclick = async () => {
+    if (!(await App.confirm("ยกเลิกการรับแจ้งเตือนและการเข้าดูข้อมูลของนักเรียนคนนี้?"))) return;
+    try { App.loading(); const res = await App.api("parent.unlink", { studentId: b.dataset.unlink }); await load(false); App.alert(res.message); }
+    catch (err) { App.alert(err.message); }
+  }));
+}
+
+$("btnLink").onclick = async () => {
+  const code = $("code").value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (code.length !== 8) return App.alert("กรุณากรอกรหัส 8 ตัวให้ครบ");
+  if (!$("agree").checked) return App.alert("กรุณาติ๊กยืนยันว่าเป็นผู้ปกครองของนักเรียน");
+  try {
+    App.loading("กำลังผูกบัญชี...");
+    const r = await App.api("parent.link", { code, relation: $("relation").value, displayName });
+    history.replaceState(null, "", location.pathname);       // เอารหัสออกจากที่อยู่เว็บ
+    $("code").value = ""; $("agree").checked = false;
+    await load(false);
+    App.alert(r.message, "สำเร็จ");
+  } catch (err) { App.alert(err.message); }
+};
+$("btnAdd").onclick = () => showLink(true);
+$("btnLinkCancel").onclick = () => load(false);
+</script>
+</body>
+</html>

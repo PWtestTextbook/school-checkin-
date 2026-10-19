@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ผู้ดูแลระบบ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+<header>ผู้ดูแลระบบ <small data-school></small></header>
+<main>
+  <!-- ผูกบัญชี LINE กับรหัสผู้ดูแล -->
+  <section id="secRegister" class="card hidden">
+    <h2>ยืนยันตัวผู้ดูแลระบบ</h2>
+    <label for="aId">รหัสเจ้าหน้าที่ 5 หลัก</label>
+    <input id="aId" inputmode="numeric" maxlength="5">
+    <button id="btnAReg">ยืนยัน</button>
+  </section>
+
+  <div id="app" class="hidden">
+    <div class="card"><h2>ภาพรวม</h2><p id="planInfo"></p><p id="stats" class="muted"></p></div>
+
+    <!-- เลือกธีมหน้าจอ -->
+    <section class="card">
+      <h2>ธีมหน้าจอของโรงเรียน</h2>
+      <p class="muted">แตะเพื่อดูตัวอย่างทันที แล้วกด "บันทึกธีม" นักเรียนและครูทุกคนจะเห็นธีมใหม่เมื่อเปิดหน้าครั้งถัดไป (รายงาน PDF ยังเป็นแบบทางการเสมอ)</p>
+      <div class="theme-grid" id="themeGrid"></div>
+      <button id="btnTheme">บันทึกธีม</button>
+    </section>
+
+    <!-- 1.1 ตั้งค่าภาคเรียน -->
+    <section class="card">
+      <h2>ตั้งค่าภาคเรียน</h2>
+      <div class="row">
+        <div><label for="sYear">ปีการศึกษา</label><input id="sYear" type="number"></div>
+        <div><label for="sSem">ภาคเรียนที่</label><select id="sSem"><option>1</option><option>2</option><option>3</option></select></div>
+      </div>
+      <div class="row">
+        <div><label for="sStart">วันเปิดเรียน</label><input id="sStart" type="date"></div>
+        <div><label for="sEnd">วันสิ้นสุด</label><input id="sEnd" type="date"></div>
+      </div>
+      <div class="row">
+        <div><label for="sLate">เริ่มนับสายหลังเวลา</label><input id="sLate" type="time"></div>
+        <div><label for="sEndTime">เวลาเลิกเรียน</label><input id="sEndTime" type="time"></div>
+      </div>
+      <div class="row">
+        <div><label for="sLat">ละติจูดโรงเรียน</label><input id="sLat" type="number" step="any"></div>
+        <div><label for="sLng">ลองจิจูดโรงเรียน</label><input id="sLng" type="number" step="any"></div>
+      </div>
+      <label class="check-item" style="color:var(--text)"><input type="checkbox" id="sSat"> มีเรียน/กิจกรรมทุกวันเสาร์ (นับเป็นวันเรียน)</label>
+      <p class="muted">ถ้าเสาร์-อาทิตย์บางวันเท่านั้น ให้เพิ่มวันที่ในตาราง extra_days ของ Supabase แทน</p>
+      <label for="sRadius">รัศมีที่อนุญาต (เมตร)</label>
+      <input id="sRadius" type="number" value="100">
+      <button id="btnHere" class="secondary">ใช้ตำแหน่งที่ฉันยืนอยู่ตอนนี้เป็นพิกัดโรงเรียน</button>
+      <button id="btnSave">บันทึกการตั้งค่า</button>
+    </section>
+
+    <!-- เปิด/ปิดแบบฟอร์มนักเรียน -->
+    <section class="card">
+      <h2>เปิด/ปิดแบบฟอร์มนักเรียน</h2>
+      <p class="muted">เปิดเมื่อถึงช่วงที่ต้องการให้นักเรียนกรอก แล้วเพิ่มปุ่มในริชเมนูของ LINE OA ชี้ไปที่ลิงก์ของแต่ละแบบฟอร์ม</p>
+      <div id="winList" class="muted">กำลังโหลด...</div>
+    </section>
+
+    <!-- 1.2 นำเข้ารายชื่อ -->
+    <section class="card">
+      <h2>นำเข้ารายชื่อนักเรียน</h2>
+      <p class="muted">ไฟล์ CSV จาก Google Sheet (ไฟล์ > ดาวน์โหลด > CSV) หัวคอลัมน์:<br>
+        <code>student_id,prefix,first_name,last_name,gender,classroom,number</code><br>
+        คอลัมน์เพิ่มเติมสำหรับบัตรนักเรียน (ใส่หรือไม่ใส่ก็ได้): <code>prefix_en,first_name_en,last_name_en,citizen_id</code></p>
+      <input id="fStudents" type="file" accept=".csv,text/csv">
+      <button id="btnImpStu">นำเข้านักเรียน</button>
+    </section>
+
+    <!-- บัตรประจำตัวนักเรียนอิเล็กทรอนิกส์ -->
+    <section class="card">
+      <h2>บัตรประจำตัวนักเรียนอิเล็กทรอนิกส์</h2>
+      <p class="muted" id="cardStats"></p>
+      <h3>1. ข้อมูลโรงเรียนบนบัตร</h3>
+      <label for="iName">ชื่อโรงเรียน (ภาษาไทย)</label><input id="iName" maxlength="120" placeholder="โรงเรียน...">
+      <label for="iNameEn">ชื่อโรงเรียน (ภาษาอังกฤษ)</label><input id="iNameEn" maxlength="120" placeholder="... School">
+      <label for="iAff">สังกัด</label>
+      <select id="iAff">
+        <option value="obec">สำนักงานคณะกรรมการการศึกษาขั้นพื้นฐาน (สพฐ.)</option>
+        <option value="opec">สำนักงานคณะกรรมการส่งเสริมการศึกษาเอกชน (สช.)</option>
+      </select>
+      <label for="iArea">เขตพื้นที่ / หน่วยงานต้นสังกัด (ถ้ามี)</label><input id="iArea" maxlength="120" placeholder="เช่น สพม.เชียงใหม่ ลำพูน">
+      <button id="btnSaveInfo">บันทึกข้อมูลโรงเรียน</button>
+
+      <label for="fLogo">ตราสัญลักษณ์โรงเรียน (PNG พื้นโปร่งใสจะสวยที่สุด)</label>
+      <img id="logoPrev" class="preview-img hidden" alt="ตราโรงเรียนปัจจุบัน" style="max-width:120px">
+      <input id="fLogo" type="file" accept="image/png,image/jpeg,image/webp">
+      <div class="row">
+        <div><button id="btnLogo">อัปโหลดตรา</button></div>
+        <div><button id="btnLogoDel" class="secondary">ลบตรา</button></div>
+      </div>
+
+      <h3>2. รูปถ่ายนักเรียน</h3>
+      <p class="muted">เลือกได้หลายไฟล์พร้อมกัน ตั้งชื่อไฟล์เป็นรหัสนักเรียน เช่น <code>10001.jpg</code> (รูปหน้าตรง ชุดนักเรียนปัจจุบัน) ระบบย่อรูปให้อัตโนมัติ ไฟล์ชื่อเดิมจะเขียนทับรูปเก่า</p>
+      <input id="fPhotos" type="file" accept="image/*" multiple>
+      <button id="btnPhotos">อัปโหลดรูปนักเรียน</button>
+      <p class="muted" id="photoLog"></p>
+
+      <h3>3. ชื่อภาษาอังกฤษและเลขประจำตัวประชาชน</h3>
+      <p class="muted">เลือกทางใดทางหนึ่ง: (ก) ใส่คอลัมน์เพิ่มในไฟล์ CSV นำเข้านักเรียนด้านบน หรือ (ข) กรอกในชีต <b>ข้อมูลบัตรนักเรียน</b> ของ Google Sheet ระเบียนสะสม แล้วกดปุ่มด้านล่าง</p>
+      <button id="btnSyncCard" class="secondary">ดึงข้อมูลจาก Google Sheet</button>
+    </section>
+
+    <!-- บัตรประกันอุบัติเหตุกลุ่ม -->
+    <section class="card">
+      <h2>บัตรประกันอุบัติเหตุกลุ่ม</h2>
+      <p class="muted">ภาพเดียวกันทั้งโรงเรียน นักเรียนเปิดดูได้จากเมนู "บัตรประกันอุบัติเหตุ"</p>
+      <div id="insPrev"></div>
+      <label for="fIns1">ภาพด้านหน้า</label><input id="fIns1" type="file" accept="image/*">
+      <label for="fIns2">ภาพด้านหลัง (ถ้ามี)</label><input id="fIns2" type="file" accept="image/*">
+      <button id="btnIns">อัปโหลดภาพบัตรประกัน</button>
+      <label for="iInsNote">ข้อความประกอบ (บริษัท เลขกรมธรรม์ ระยะคุ้มครอง เบอร์แจ้งเคลม)</label>
+      <textarea id="iInsNote" maxlength="600" style="min-height:100px"></textarea>
+      <div class="row">
+        <div><button id="btnInsNote">บันทึกข้อความ</button></div>
+        <div><button id="btnInsDel" class="secondary">ลบภาพบัตรประกัน</button></div>
+      </div>
+    </section>
+
+    <!-- ระบบเสริม -->
+    <section class="card">
+      <h2>ระบบเสริม (แพ็กเกจเพิ่มจาก Standard)</h2>
+      <p id="addonStatus"></p>
+      <p class="muted">เปิด/ปิดโดยผู้ให้บริการตามแพ็กเกจที่โรงเรียนเลือก</p>
+      <div id="conductCfg" class="hidden">
+        <h3>คะแนนความประพฤติ</h3>
+        <div class="row">
+          <div><label for="cBase">คะแนนตั้งต้น</label><input id="cBase" type="number" min="1" max="1000"></div>
+          <div><label for="cReset">เริ่มนับใหม่ทุก</label>
+            <select id="cReset"><option value="year">ปีการศึกษา</option><option value="semester">ภาคเรียน</option></select></div>
+        </div>
+        <p class="muted">ประเภทความผิดและคะแนนที่ตัด แก้ไขได้ในตาราง <code>conduct_rules</code> ของ Supabase (ตั้งค่า active = false เพื่อซ่อนข้อที่ไม่ใช้)</p>
+        <button id="btnConductCfg">บันทึกการตั้งค่าคะแนนความประพฤติ</button>
+        <h3>นำเข้าบุคลากรอื่น (ครูผู้สอน / ผู้บริหาร)</h3>
+        <p class="muted">ครูผู้สอนที่ไม่ได้เป็นครูที่ปรึกษาแต่ต้องตัดคะแนนได้ หัวคอลัมน์: <code>staff_id,full_name,role</code>
+          (role: <code>teacher</code> = ครูผู้สอน, <code>executive</code> = ผู้บริหาร, <code>staff</code> = เจ้าหน้าที่ดูอย่างเดียว)
+          แล้วให้ลงทะเบียนด้วยรหัสในหน้าครู</p>
+        <input id="fStaff" type="file" accept=".csv,text/csv">
+        <button id="btnImpStaff">นำเข้าบุคลากร</button>
+      </div>
+      <div id="notifyCfg" class="hidden">
+        <h3>แจ้งเตือนผู้ปกครองผ่าน LINE</h3>
+        <p class="muted" id="notifyStatus"></p>
+        <label class="check-item" style="color:var(--text)"><input type="checkbox" id="nLate"> แจ้งเมื่อมาสาย (ทันทีที่ลงเวลา)</label>
+        <label class="check-item" style="color:var(--text)"><input type="checkbox" id="nAbsent"> แจ้งเมื่อยังไม่มาเรียน</label>
+        <label class="check-item" style="color:var(--text)"><input type="checkbox" id="nConduct"> แจ้งเมื่อถูกตัดคะแนนความประพฤติ</label>
+        <label for="nTime">เวลาตรวจ "ยังไม่มาเรียน" (ต้องอยู่ระหว่าง 08:00-11:45 ตามงานตั้งเวลา)</label>
+        <input id="nTime" type="time" min="08:00" max="11:45">
+        <button id="btnNotifyCfg">บันทึกการตั้งค่าแจ้งเตือน</button>
+        <button id="btnNotifyTest" class="secondary">ส่งข้อความทดสอบถึง LINE ของฉัน</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>นำเข้ารายชื่อครูที่ปรึกษา</h2>
+      <p class="muted">หัวคอลัมน์: <code>teacher_id,full_name,classroom</code></p>
+      <input id="fTeachers" type="file" accept=".csv,text/csv">
+      <button id="btnImpT">นำเข้าครูที่ปรึกษา</button>
+    </section>
+
+    <section class="card">
+      <h2>ล้างการลงทะเบียนนักเรียน</h2>
+      <p class="muted">ใช้เมื่อนักเรียนเปลี่ยนมือถือ/บัญชี LINE หรือสแกนใบหน้าไม่ผ่านบ่อย นักเรียนจะต้องลงทะเบียนใหม่</p>
+      <input id="rId" inputmode="numeric" maxlength="5" placeholder="รหัสนักเรียน 5 หลัก">
+      <button id="btnReset" class="danger">ล้างการลงทะเบียน</button>
+    </section>
+  </div>
+</main>
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/common.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+
+(async () => {
+  try { await App.init(CONFIG.LIFF_ADMIN); await load(); } catch (e) { App.alert(e.message); }
+})();
+
+async function load() {
+  try {
+    App.loading("กำลังโหลด...");
+    const r = await App.api("admin.getSettings");
+    App.close();
+    $("secRegister").classList.add("hidden");
+    $("app").classList.remove("hidden");
+    const s = r.settings;
+    $("stats").textContent = `นักเรียน ${r.stats.students} คน | ลงทะเบียนใบหน้าแล้ว ${r.stats.registered} คน | ครูที่ปรึกษา ${r.stats.teachers} คน`;
+    $("cardStats").textContent = `มีรูปถ่ายแล้ว ${r.stats.photos} คน | มีเลขประจำตัวประชาชนแล้ว ${r.stats.citizenIds} คน จาก ${r.stats.students} คน`;
+    $("iName").value = s.school_name ?? CONFIG.SCHOOL_NAME ?? ""; $("iNameEn").value = s.school_name_en ?? "";
+    const ad = s.addons || {}, ft = s.features || {};
+    $("planInfo").innerHTML = `แพ็กเกจ: <b>${App.esc(ft.planLabel || "Complete")}</b>${ft.plan !== "totalcare" && ad.service ? " + กิจกรรมเพื่อสังคม" : ""}${ft.plan !== "totalcare" && ad.conduct ? " + คะแนนความประพฤติ" : ""}${ad.notify ? " + แจ้งเตือนผู้ปกครอง" : ""}
+      <br><span class="muted">ต้องการเปลี่ยนแพ็กเกจ กรุณาติดต่อผู้ให้บริการ</span>`;
+    themesAllowed = ft.themes !== false;
+    $("addonStatus").innerHTML = `กิจกรรมเพื่อสังคมและสาธารณประโยชน์: <b>${ad.service ? "เปิดใช้" : "ไม่ได้เปิด"}</b><br>คะแนนความประพฤติ: <b>${ad.conduct ? "เปิดใช้" : "ไม่ได้เปิด"}</b>`;
+    $("conductCfg").classList.toggle("hidden", !ad.conduct);
+    $("addonStatus").innerHTML += `<br>แจ้งเตือนผู้ปกครองผ่าน LINE: <b>${ad.notify ? "เปิดใช้" : "ไม่ได้เปิด"}</b>`;
+    $("notifyCfg").classList.toggle("hidden", !ad.notify);
+    $("nLate").checked = s.notify_late !== false; $("nAbsent").checked = s.notify_absent !== false;
+    $("nConduct").checked = s.notify_conduct !== false; $("nTime").value = String(s.absent_check_time ?? "09:00").slice(0, 5);
+    const n = r.notify || {};
+    $("notifyStatus").innerHTML = `Channel access token: <b>${n.tokenReady ? "ตั้งค่าแล้ว" : "ยังไม่ได้ตั้ง"}</b> · งานตั้งเวลา (CRON_SECRET): <b>${n.cronReady ? "ตั้งค่าแล้ว" : "ยังไม่ได้ตั้ง"}</b><br>
+      ผู้ปกครองผูกบัญชีแล้ว ${n.parents ?? 0} บัญชี · ส่งข้อความเดือนนี้ ${n.messagesThisMonth ?? 0} ข้อความ${n.failedThisMonth ? ` · <b style="color:var(--red)">ส่งไม่สำเร็จ ${n.failedThisMonth} ครั้ง</b>` : ""}`;
+    $("cBase").value = s.conduct_base ?? 100; $("cReset").value = s.conduct_reset || "year";
+    $("iAff").value = s.affiliation || "obec"; $("iArea").value = s.area_office ?? ""; $("iInsNote").value = s.insurance_note ?? "";
+    $("logoPrev").classList.toggle("hidden", !r.assets.logoUrl); if (r.assets.logoUrl) $("logoPrev").src = r.assets.logoUrl;
+    $("insPrev").innerHTML = r.assets.insuranceUrls.filter(Boolean)
+      .map((u) => `<img class="preview-img" src="${App.esc(u)}" alt="ภาพบัตรประกันปัจจุบัน">`).join("") || `<p class="muted">ยังไม่มีภาพบัตรประกัน</p>`;
+    $("sYear").value = s.academic_year; $("sSem").value = s.semester;
+    $("sStart").value = s.start_date; $("sEnd").value = s.end_date;
+    $("sLate").value = s.late_time.slice(0, 5); $("sEndTime").value = s.end_time.slice(0, 5);
+    $("sLat").value = s.school_lat; $("sLng").value = s.school_lng; $("sRadius").value = s.radius_m;
+    $("sSat").checked = !!s.saturday_school;
+    pickedTheme = s.theme || window.DEFAULT_THEME; App.setTheme(pickedTheme); renderThemes();
+    loadWindows().catch((e) => ($("winList").textContent = e.message));
+  } catch (e) {
+    App.close();
+    // ยังไม่ได้ผูก LINE กับรหัสผู้ดูแล
+    $("secRegister").classList.remove("hidden");
+    if (!e.message.includes("เฉพาะผู้ดูแลระบบ")) App.alert(e.message);
+  }
+}
+
+// ---------- เปิด/ปิดแบบฟอร์ม ----------
+async function loadWindows() {
+  const r = await App.api("admin.formWindows");
+  $("winList").innerHTML = r.windows.map((w) => `
+    <div class="card" style="border:1px solid var(--line);box-shadow:none">
+      <b>${App.esc(w.title)}</b><br>
+      <span class="muted">ส่งแล้วรอบนี้ ${r.counts[w.form] ?? 0} คน · ลิงก์ริชเมนู:
+        <code>https://liff.line.me/${CONFIG.LIFF_FORMS}?f=${w.form}</code></span>
+      ${w.allowed === false ? `<p class="muted">ไม่อยู่ในแพ็กเกจ ${App.esc(r.planLabel)}</p>` : `
+      <label class="check-item" style="color:var(--text)"><input type="checkbox" data-win="${w.form}" ${w.is_open ? "checked" : ""}> เปิดให้นักเรียนกรอก</label>
+      <input data-note="${w.form}" maxlength="200" placeholder="ข้อความแจ้งนักเรียน เช่น กรอกภายใน 30 มิ.ย." value="${App.esc(w.note ?? "")}">
+      <button class="secondary" data-save="${w.form}">บันทึก</button>`}
+    </div>`).join("");
+  $("winList").querySelectorAll("[data-save]").forEach((b) => (b.onclick = async () => {
+    const f = b.dataset.save;
+    try {
+      App.loading();
+      const r2 = await App.api("admin.setFormWindow", {
+        form: f, isOpen: document.querySelector(`[data-win="${f}"]`).checked,
+        note: document.querySelector(`[data-note="${f}"]`).value,
+      });
+      App.alert(r2.message, "สำเร็จ");
+    } catch (e) { App.alert(e.message); }
+  }));
+}
+
+$("btnAReg").onclick = async () => {
+  try {
+    App.loading();
+    const r = await App.api("teacher.register", { teacherId: $("aId").value.trim() });
+    await App.alert(r.message);
+    load();
+  } catch (e) { App.alert(e.message); }
+};
+
+// ---------- ธีม ----------
+let currentSettings = null, pickedTheme = window.DEFAULT_THEME, themesAllowed = true;
+function renderThemes() {
+  if (!themesAllowed) {   // Starter: ใช้ธีม Formal Blue เท่านั้น
+    $("themeGrid").innerHTML = `<p class="muted">แพ็กเกจ Starter ใช้ธีม Formal Blue (ทางการ) เลือกธีมอื่นได้ตั้งแต่แพ็กเกจ Standard</p>`;
+    $("btnTheme").classList.add("hidden"); pickedTheme = "formal"; return;
+  }
+  $("btnTheme").classList.remove("hidden");
+  $("themeGrid").innerHTML = THEMES.map((t) => `
+    <label class="theme-opt ${t.id === pickedTheme ? "on" : ""}">
+      <input type="radio" name="theme" value="${t.id}" ${t.id === pickedTheme ? "checked" : ""}>
+      <div class="sw" style="background:${t.colors[0]}">${t.colors.slice(1).map((c) => `<i style="background:${c}"></i>`).join("")}</div>
+      <div class="nm">${App.esc(t.name)}<small>${App.esc(t.desc)}</small></div>
+    </label>`).join("");
+  $("themeGrid").querySelectorAll("input").forEach((r) => (r.onchange = () => {
+    pickedTheme = r.value; App.setTheme(pickedTheme); renderThemes();     // ดูตัวอย่างทันที
+  }));
+}
+$("btnTheme").onclick = () => $("btnSave").click();
+
+$("btnHere").onclick = async () => {
+  try {
+    App.loading("กำลังอ่านพิกัด...");
+    const p = await App.getLocation();
+    $("sLat").value = p.lat.toFixed(6); $("sLng").value = p.lng.toFixed(6);
+    App.alert(`ได้พิกัดแล้ว (ความแม่นยำ ±${p.accuracy} เมตร) อย่าลืมกดบันทึก`);
+  } catch (e) { App.alert(e.message); }
+};
+
+$("btnSave").onclick = async () => {
+  try {
+    App.loading("กำลังบันทึก...");
+    const r = await App.api("admin.saveSettings", { settings: {
+      academic_year: Number($("sYear").value), semester: Number($("sSem").value),
+      start_date: $("sStart").value, end_date: $("sEnd").value,
+      late_time: $("sLate").value, end_time: $("sEndTime").value,
+      school_lat: Number($("sLat").value), school_lng: Number($("sLng").value), radius_m: Number($("sRadius").value),
+      saturday_school: $("sSat").checked,
+      theme: pickedTheme,
+    } });
+    App.alert(r.message, "สำเร็จ");
+  } catch (e) { App.alert(e.message); }
+};
+
+function readCsv(input) {
+  return new Promise((resolve, reject) => {
+    const f = input.files[0];
+    if (!f) return reject(new Error("กรุณาเลือกไฟล์ CSV"));
+    Papa.parse(f, { header: true, skipEmptyLines: true, complete: (r) => resolve(r.data), error: reject });
+  });
+}
+async function importRows(input, action) {
+  try {
+    const rows = await readCsv(input);
+    if (!(await App.confirm(`พบข้อมูล ${rows.length} แถว ต้องการนำเข้าหรือไม่?`))) return;
+    App.loading("กำลังนำเข้า...");
+    const r = await App.api(action, { rows });
+    await App.alert(r.message, "สำเร็จ");
+    load();
+  } catch (e) { App.alert(e.message); }
+}
+$("btnImpStu").onclick = () => importRows($("fStudents"), "admin.importStudents");
+$("btnImpT").onclick = () => importRows($("fTeachers"), "admin.importTeachers");
+
+$("btnReset").onclick = async () => {
+  const id = $("rId").value.trim();
+  if (!(await App.confirm(`ยืนยันล้างการลงทะเบียนของรหัส ${id}?`))) return;
+  try { App.loading(); const r = await App.api("admin.resetStudent", { studentId: id }); App.alert(r.message, "สำเร็จ"); }
+  catch (e) { App.alert(e.message); }
+};
+
+// ---------- บัตรนักเรียน / บัตรประกัน ----------
+const schoolInfo = () => ({
+  school_name: $("iName").value, school_name_en: $("iNameEn").value, affiliation: $("iAff").value,
+  area_office: $("iArea").value, insurance_note: $("iInsNote").value,
+  conduct_base: Number($("cBase").value), conduct_reset: $("cReset").value,
+  notify_late: $("nLate").checked, notify_absent: $("nAbsent").checked, notify_conduct: $("nConduct").checked,
+  absent_check_time: $("nTime").value || "09:00",
+});
+async function saveInfo() {
+  try { App.loading("กำลังบันทึก..."); const r = await App.api("admin.saveSchoolInfo", { info: schoolInfo() }); App.alert(r.message, "สำเร็จ"); }
+  catch (e) { App.alert(e.message); }
+}
+$("btnSaveInfo").onclick = saveInfo;
+$("btnInsNote").onclick = saveInfo;
+$("btnConductCfg").onclick = saveInfo;
+$("btnNotifyCfg").onclick = saveInfo;
+$("btnNotifyTest").onclick = async () => {
+  try { App.loading("กำลังส่ง..."); const r = await App.api("admin.testNotify"); App.alert(r.message, "สำเร็จ"); }
+  catch (err) { App.alert(err.message); }
+};
+$("btnImpStaff").onclick = () => importRows($("fStaff"), "admin.importStaff");
+
+async function uploadAsset(kind, file, png) {
+  const image = png
+    ? await App.compressImage(file, 400, 0.9, 300, "image/png")
+    : await App.compressImage(file, 1600, 0.85, 700);
+  return App.api("admin.uploadAsset", { kind, image });
+}
+$("btnLogo").onclick = async () => {
+  const f = $("fLogo").files[0];
+  if (!f) return App.alert("กรุณาเลือกไฟล์ตราโรงเรียน");
+  try { App.loading("กำลังอัปโหลดตรา..."); await uploadAsset("logo", f, true); await App.alert("อัปโหลดตราแล้ว", "สำเร็จ"); load(); }
+  catch (e) { App.alert(e.message); }
+};
+$("btnLogoDel").onclick = async () => {
+  if (!(await App.confirm("ลบตราโรงเรียนออกจากบัตร?"))) return;
+  try { App.loading(); await App.api("admin.removeAsset", { kind: "logo" }); load(); } catch (e) { App.alert(e.message); }
+};
+
+$("btnPhotos").onclick = async () => {
+  const files = [...$("fPhotos").files];
+  if (!files.length) return App.alert("กรุณาเลือกรูปนักเรียน");
+  let ok = 0; const bad = [];
+  for (let i = 0; i < files.length; i++) {
+    const f = files[i], id = (/^(\d{5})/.exec(f.name) || [])[1];
+    App.loading(`กำลังอัปโหลดรูป ${i + 1}/${files.length}\n${f.name}`);
+    try {
+      if (!id) throw new Error("ชื่อไฟล์ไม่ขึ้นต้นด้วยรหัส 5 หลัก");
+      const image = await App.compressImage(f, 600, 0.8, 150);
+      await App.api("admin.uploadPhoto", { studentId: id, image });
+      ok++;
+    } catch (e) { bad.push(`${f.name}: ${e.message}`); }
+  }
+  App.close();
+  $("photoLog").textContent = bad.length ? "ไม่สำเร็จ:\n" + bad.join("\n") : "";
+  $("photoLog").style.whiteSpace = "pre-line";
+  await App.alert(`อัปโหลดสำเร็จ ${ok} รูป` + (bad.length ? ` ไม่สำเร็จ ${bad.length} รูป (ดูรายการใต้ปุ่ม)` : ""), "เสร็จแล้ว");
+  $("fPhotos").value = "";
+  load();
+};
+
+$("btnSyncCard").onclick = async () => {
+  if (!(await App.confirm('ดึงชื่อภาษาอังกฤษและเลขประจำตัวประชาชนจากชีต "ข้อมูลบัตรนักเรียน" มาแทนข้อมูลเดิม?'))) return;
+  try { App.loading("กำลังดึงข้อมูล..."); const r = await App.api("admin.syncCardSheet"); await App.alert(r.message, "สำเร็จ"); load(); }
+  catch (e) { App.alert(e.message); }
+};
+
+$("btnIns").onclick = async () => {
+  const f1 = $("fIns1").files[0], f2 = $("fIns2").files[0];
+  if (!f1 && !f2) return App.alert("กรุณาเลือกภาพบัตรประกัน");
+  try {
+    if (f1) { App.loading("กำลังอัปโหลดด้านหน้า..."); await uploadAsset("insurance1", f1); }
+    if (f2) { App.loading("กำลังอัปโหลดด้านหลัง..."); await uploadAsset("insurance2", f2); }
+    await App.alert("อัปโหลดภาพบัตรประกันแล้ว", "สำเร็จ");
+    $("fIns1").value = ""; $("fIns2").value = "";
+    load();
+  } catch (e) { App.alert(e.message); }
+};
+$("btnInsDel").onclick = async () => {
+  if (!(await App.confirm("ลบภาพบัตรประกันทั้งหมด? (เช่น เมื่อหมดปีกรมธรรม์)"))) return;
+  try { App.loading(); await App.api("admin.removeAsset", { kind: "insurance" }); load(); } catch (e) { App.alert(e.message); }
+};
+</script>
+</body>
+</html>

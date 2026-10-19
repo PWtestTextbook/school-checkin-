@@ -1,0 +1,23 @@
+/* ธีม 8 · Wizard Hall (เวทมนตร์เข้มข้น: เทียน หมวกพ่อมด ไม้กายสิทธิ์) */
+@import url("https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Pridi:wght@400;500;600&display=swap");
+:root {
+  --green: #4B2F8C; --green-dark: #2A1A5A; --btn-text: #FBE7B0;
+  --bg: #120F24;
+  --bg-image: radial-gradient(ellipse at 50% -10%, rgba(255,190,90,.28), transparent 55%), radial-gradient(1.5px 1.5px at 40px 260px, #F5E6B8, transparent), radial-gradient(1px 1px at 340px 220px, #fff, transparent), linear-gradient(180deg, #1C1636, #0E0B1C);
+  --card: #EEDCB4; --card-border: 1px solid #9C7A38; --card-shadow: 0 14px 30px rgba(0,0,0,.6), 0 0 40px rgba(255,190,90,.12);
+  --text: #3A2812; --muted: #6A4E26; --line: #CDB27A;
+  --radius: 6px 10px 8px 12px; --btn-radius: 30px; --btn-shadow: 0 0 22px rgba(160,110,255,.35);
+  --header-bg: #0B0918; --header-text: #F2C96B; --header-border: 1px solid #9C7A38;
+  --input-bg: #FBF4E2; --input-text: #3A2812; --th-bg: #E6CF9E; --soft-bg: #E8D2A4;
+  --accent: #F2C96B; --pick-bg: #E3CB96;
+  --font-body: "Pridi", serif; --font-head: "Charm", cursive;
+}
+/* เทียนลอยเหนือหัวหน้าจอ (ภาพวาดเอง ไม่มีลิขสิทธิ์ผู้อื่น) */
+header, .doc-head { position: relative; padding-top: 52px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='48' viewBox='0 0 120 48'%3E%3Cellipse cx='20' cy='12' rx='9' ry='12' fill='%23FFBE5A' fill-opacity='.25'/%3E%3Cpath d='M20 4C17 10 17 14 20 17C23 14 23 10 20 4Z' fill='%23FFD27A'/%3E%3Crect x='16' y='17' width='8' height='28' rx='2' fill='%23F4EBD8'/%3E%3Cellipse cx='80' cy='18' rx='8' ry='11' fill='%23FFBE5A' fill-opacity='.22'/%3E%3Cpath d='M80 11C77.5 16 77.5 19 80 22C82.5 19 82.5 16 80 11Z' fill='%23FFD27A'/%3E%3Crect x='76.5' y='22' width='7' height='24' rx='2' fill='%23F4EBD8'/%3E%3C/svg%3E");
+  background-repeat: repeat-x; background-position: 10px 4px; }
+header::after, .doc-head::after { content: ""; position: absolute; right: 14px; bottom: -6px; width: 54px; height: 52px; transform: rotate(14deg);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 92'%3E%3Cpath d='M48 4C56 22 66 44 78 66L18 66C30 46 40 26 48 4Z' fill='%233B2A7A' stroke='%231E1544' stroke-width='2'/%3E%3Cellipse cx='48' cy='70' rx='46' ry='12' fill='%232E2160' stroke='%231E1544' stroke-width='2'/%3E%3Cpath d='M22 62C38 66 58 66 74 62L76 68C58 72 38 72 20 68Z' fill='%23C9A24A'/%3E%3Cpath d='M48 26l2.2 5 5.4.4-4.1 3.6 1.3 5.3L48 37.4l-4.8 2.9 1.3-5.3-4.1-3.6 5.4-.4z' fill='%23F2C96B'/%3E%3C/svg%3E") no-repeat center / contain; }
+.step-head h2, .step-no, main > h2 { color: #F2C96B !important; text-shadow: 0 0 10px rgba(255,190,90,.45); }
+main > .muted, .step-desc { color: #C8B993 !important; }
+button:not(.secondary):not(.form-card):not(.review-row):not(.small):not(.theme-opt), .btn { background-image: linear-gradient(180deg, #4B2F8C, #2A1A5A); border: 1.5px solid #F2C96B; font-family: "Charm", cursive; font-size: 20px; }

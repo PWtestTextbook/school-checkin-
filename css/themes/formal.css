@@ -1,0 +1,13 @@
+/* ธีม 1 · Formal Blue (ทางการ) — ธีมเริ่มต้น */
+@import url("https://fonts.googleapis.com/css2?family=Prompt:wght@500;600&family=Sarabun:wght@400;600;700&display=swap");
+:root {
+  --green: #0F2C5C; --green-dark: #0A1F42; --btn-text: #ffffff;
+  --bg: #F2F5FA; --bg-image: none;
+  --card: #ffffff; --card-border: 0 solid transparent; --card-shadow: 0 2px 8px rgba(15,44,92,.10);
+  --text: #14213D; --muted: #5A6478; --line: #D7DEEA;
+  --radius: 10px; --btn-radius: 8px; --btn-shadow: none;
+  --header-bg: #0F2C5C; --header-text: #ffffff; --header-border: 4px solid #C9A227;
+  --input-bg: #ffffff; --input-text: #14213D; --th-bg: #EEF2F8; --soft-bg: #EEF2F8;
+  --accent: #C9A227; --pick-bg: #E6EDF8;
+  --font-body: "Sarabun", sans-serif; --font-head: "Prompt", "Sarabun", sans-serif;
+}

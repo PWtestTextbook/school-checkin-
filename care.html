@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ระบบดูแลช่วยเหลือนักเรียน</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/forms.css">
+  <link rel="stylesheet" href="css/care.css">
+  <script src="js/theme.js"></script>
+</head>
+<body class="forms">
+<div class="doc-head">
+  <div class="crest" id="crest">ดูแล</div>
+  <h1 id="docTitle">ระบบดูแลช่วยเหลือนักเรียน</h1>
+  <div class="school" data-school></div>
+  <span class="form-code hidden" id="docCode"></span>
+</div>
+
+<!-- ส่วนหัว: เลือกห้อง + เมนูหลัก -->
+<div class="care-top hidden" id="careTop">
+  <select id="room"></select>
+  <nav class="mainnav">
+    <button data-main="view" class="on">ข้อมูลนักเรียน</button>
+    <button data-main="visit">เยี่ยมบ้าน</button>
+    <button data-main="sdq">SDQ ครู/ผู้ปกครอง</button>
+  </nav>
+</div>
+
+<main>
+  <!-- 3. ระบบแสดงข้อมูล -->
+  <section id="viewData" class="hidden">
+    <div class="seg" id="segData">
+      <button data-v="pp8" class="on">ปพ.8</button>
+      <button data-v="sdq">SDQ</button>
+      <button data-v="eq">EQ</button>
+      <button data-v="contact">เบอร์โทร/ที่พัก</button>
+      <button data-v="income">รายได้</button>
+    </div>
+    <div id="dataBody"></div>
+  </section>
+
+  <!-- 1. เยี่ยมบ้าน -->
+  <section id="viewVisit" class="hidden"></section>
+  <!-- 2. SDQ ครู/ผู้ปกครอง -->
+  <section id="viewSdq" class="hidden"></section>
+  <!-- แบบฟอร์ม -->
+  <section id="viewForm" class="hidden"></section>
+  <!-- ตัวอย่าง PDF / บันทึกเสร็จ -->
+  <section id="viewPreview" class="hidden"></section>
+</main>
+<div id="rpHost"></div>
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/common.js"></script>
+<script src="js/form-engine.js"></script>
+<script src="js/form-sdq.js"></script>
+<script src="js/form-eq.js"></script>
+<script src="js/form-homevisit.js"></script>
+<script src="js/hv-report.js"></script>
+<script src="js/care.js"></script>
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ระบบครูที่ปรึกษา</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+<header>ระบบครูที่ปรึกษา <small id="whoami" data-school></small></header>
+
+<!-- ===== ลงทะเบียนครั้งแรก ===== -->
+<main id="secRegister" class="hidden">
+  <div class="card">
+    <h2>ลงทะเบียนครั้งแรก</h2>
+    <label for="tId">รหัสครู 5 หลัก</label>
+    <input id="tId" inputmode="numeric" maxlength="5">
+    <button id="btnTReg">ยืนยัน</button>
+  </div>
+</main>
+
+<div id="app" class="hidden">
+  <nav class="tabs">
+    <button data-tab="today" class="active">วันนี้</button>
+    <button data-tab="manual">เช็คแทน</button>
+    <button data-tab="history">ตารางสะสม</button>
+    <button data-tab="homeroom">โฮมรูม</button>
+    <button data-tab="service" class="hidden">จิตอาสา</button>
+    <button data-tab="conduct" class="hidden">ความประพฤติ</button>
+    <button data-tab="parents" class="hidden">ผู้ปกครอง</button>
+  </nav>
+  <main>
+    <a class="btn" id="careLink" style="text-align:center;text-decoration:none;margin:0 0 16px;background:#1e3a5f">ระบบดูแลช่วยเหลือนักเรียน (เยี่ยมบ้าน · SDQ · ปพ.8) ›</a>
+    <div class="card" id="roomPicker">
+      <label for="room" style="margin-top:0">ห้อง</label>
+      <select id="room"></select>
+    </div>
+
+    <!-- 2.1 + 2.3 -->
+    <section id="tab-today">
+      <div class="card">
+        <h2 id="todayTitle">สรุปวันนี้</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th></th><th>ทั้งหมด</th><th>มา</th><th>สาย</th><th>ขาด/ยังไม่มา</th></tr></thead>
+          <tbody id="sumBody"></tbody>
+        </table></div>
+        <button id="btnRefresh" class="secondary">รีเฟรช</button>
+      </div>
+      <div class="card">
+        <h2>รายชื่อ (เรียงตามเลขที่)</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>เลขที่</th><th>ชื่อ-สกุล</th><th>สถานะ</th><th>เวลา</th></tr></thead>
+          <tbody id="listBody"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- 2.2 -->
+    <section id="tab-manual" class="hidden">
+      <div class="card">
+        <h2>เช็คชื่อแทนนักเรียน (ไม่ต้องเซลฟี่)</h2>
+        <p class="muted">แสดงเฉพาะนักเรียนที่ยังไม่ได้ลงเวลาวันนี้ ระบบจะใช้พิกัด GPS ของครู</p>
+        <label class="check-item" style="color:var(--text)"><input type="checkbox" id="chkAll"> <b>เลือกทั้งหมด</b></label>
+        <div id="manualList"></div>
+        <label for="mNote">เหตุผล / หมายเหตุ</label>
+        <select id="mNote">
+          <option>ครูที่ปรึกษา checkIn แทน</option>
+          <option>เข้าร่วมกิจกรรมนอกสถานที่</option>
+          <option value="__other">อื่นๆ (พิมพ์เอง)</option>
+        </select>
+        <input id="mNoteOther" class="hidden" maxlength="200" placeholder="เช่น เข้าค่ายลูกเสือ, ไปทัศนศึกษา, ไปฝึกงาน ณ โครงการช่างหัวมัน" style="margin-top:8px">
+        <label>สถานะ</label>
+        <div class="row">
+          <label class="check-item" style="color:var(--text)"><input type="radio" name="mStatus" value="ปกติ" checked> ปกติ</label>
+          <label class="check-item" style="color:var(--text)"><input type="radio" name="mStatus" value="สาย"> สาย</label>
+        </div>
+        <button id="btnManual">บันทึกการมาเรียน</button>
+      </div>
+    </section>
+
+    <!-- 2.4 -->
+    <section id="tab-history" class="hidden">
+      <div class="card">
+        <h2>ตารางการมาเรียนสะสม</h2>
+        <p class="muted">/ = มา, ส = สาย, ข = ขาด (นับเฉพาะวันเรียน ตั้งแต่เปิดภาคเรียนถึงวันนี้)</p>
+        <div class="table-wrap"><table class="history" id="histTable"></table></div>
+      </div>
+    </section>
+
+    <!-- 2.5 -->
+    <section id="tab-homeroom" class="hidden">
+      <div class="card">
+        <h2>บันทึกกิจกรรมโฮมรูม</h2>
+        <label for="hDate">วันที่</label>
+        <input id="hDate" type="date">
+        <label for="hText">บันทึกการปฏิบัติ (ไม่เกิน 500 ตัวอักษร)</label>
+        <textarea id="hText" maxlength="500"></textarea>
+        <p class="muted" id="hCount">0/500</p>
+        <button id="btnHSave">บันทึก</button>
+      </div>
+      <div class="card">
+        <h2>บันทึกที่ผ่านมา</h2>
+        <div id="hList" class="muted">-</div>
+      </div>
+    </section>
+
+    <!-- ระบบเสริม: กิจกรรมเพื่อสังคมและสาธารณประโยชน์ -->
+    <section id="tab-service" class="hidden">
+      <div class="card">
+        <h2>กิจกรรมเพื่อสังคมและสาธารณประโยชน์</h2>
+        <p class="muted" id="svPeriod"></p>
+        <p class="muted">แตะชื่อนักเรียนเพื่อดูหลักฐานและอนุมัติ (* ชม. = ชั่วโมงที่อนุมัติแล้ว นับรวมเมื่ออนุมัติเท่านั้น)</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>เลขที่</th><th>ชื่อ-สกุล</th><th>ครั้ง</th><th>ชม.*</th><th>รอ</th></tr></thead>
+          <tbody id="svBody"></tbody>
+        </table></div>
+      </div>
+      <div class="card hidden" id="svDetail"></div>
+    </section>
+
+    <!-- แพ็กเกจเสริม: แจ้งเตือนผู้ปกครอง -->
+    <section id="tab-parents" class="hidden">
+      <div class="card">
+        <h2>ผู้ปกครองรับแจ้งเตือนทาง LINE</h2>
+        <p class="muted">กด "ออกรหัส" แล้วส่งรหัสให้ผู้ปกครองของนักเรียนคนนั้นโดยตรง (รหัสใช้ได้ครั้งเดียว หมดอายุ 7 วัน) ห้ามประกาศรหัสในกลุ่ม</p>
+        <p class="muted" id="parSummary"></p>
+        <div id="parList"></div>
+      </div>
+    </section>
+
+    <!-- ระบบเสริม: คะแนนความประพฤติ -->
+    <section id="tab-conduct" class="hidden">
+      <div class="card">
+        <h2>ตัดคะแนนความประพฤติ</h2>
+        <label for="cdQ" style="margin-top:0">ค้นหานักเรียน (เลขประจำตัว หรือ ชื่อ / นามสกุล)</label>
+        <div class="row" style="align-items:center">
+          <div style="flex:3"><input id="cdQ" maxlength="40" placeholder="เช่น 10007 หรือ พิมพ์ชนก"></div>
+          <div style="flex:1"><button id="btnCdSearch" style="margin:0">ค้นหา</button></div>
+        </div>
+        <div id="cdResults"></div>
+      </div>
+      <div id="cdStudent" class="hidden"></div>
+      <div class="card hidden" id="cdRoomCard">
+        <h2>คะแนนความประพฤติของห้อง</h2>
+        <p class="muted" id="cdRoomPeriod"></p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>เลขที่</th><th>ชื่อ-สกุล</th><th>ถูกตัด (ครั้ง)</th><th>คงเหลือ</th></tr></thead>
+          <tbody id="cdRoomBody"></tbody>
+        </table></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script src="js/config.js"></script>
+<script src="js/common.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+let me = null, todayRows = [], homeroomLogs = [], currentTab = "today";
+
+(async () => {
+  try {
+    await App.init(CONFIG.LIFF_TEACHER);
+    await start();
+  } catch (e) { App.alert(e.message); }
+})();
+
+async function start() {
+  App.loading("กำลังโหลด...");
+  me = await App.api("me");
+  App.close();
+  if (!me.registered) { $("secRegister").classList.remove("hidden"); return; }
+  $("secRegister").classList.add("hidden");
+  $("app").classList.remove("hidden");
+  $("whoami").textContent = `${me.name} (${me.role === "teacher" ? "ครูที่ปรึกษา" : me.role})`;
+  $("room").innerHTML = me.classrooms.map((c) => `<option value="${App.esc(c)}">ม.${App.esc(c)}</option>`).join("");
+  if (me.myClassroom) $("room").value = me.myClassroom;
+  $("roomPicker").classList.toggle("hidden", me.classrooms.length <= 1);
+  $("careLink").href = `https://liff.line.me/${CONFIG.LIFF_CARE}`;
+  $("careLink").classList.toggle("hidden", me.features && !me.features.care);   // ระบบดูแลฯ: Complete ขึ้นไป
+  $("hDate").value = App.today();
+  $("hDate").max = App.today();
+  // ระบบเสริม (เปิดตามแพ็กเกจของโรงเรียน)
+  document.querySelector('[data-tab="service"]').classList.toggle("hidden", !me.addons?.service || !me.classrooms.length);
+  document.querySelector('[data-tab="conduct"]').classList.toggle("hidden", !me.addons?.conduct);
+  document.querySelector('[data-tab="parents"]').classList.toggle("hidden", !me.addons?.notify || !me.classrooms.length);
+  if (!me.classrooms.length) {          // ครูผู้สอน (ไม่มีห้องที่ปรึกษา): ใช้ได้เฉพาะตัดคะแนนความประพฤติ
+    document.querySelectorAll(".tabs button").forEach((b) => b.classList.toggle("hidden", b.dataset.tab !== "conduct"));
+    $("careLink").classList.add("hidden"); $("roomPicker").classList.add("hidden");
+    $("whoami").textContent = `${me.name} (ครูผู้สอน)`;
+    if (!me.addons?.conduct) return App.alert("บัญชีของท่านยังไม่มีเมนูที่ใช้งานได้ กรุณาติดต่อผู้ดูแลระบบ");
+    return openTab("conduct");
+  }
+  openTab("today");
+}
+
+$("btnTReg").onclick = async () => {
+  try {
+    App.loading();
+    const r = await App.api("teacher.register", { teacherId: $("tId").value.trim() });
+    await App.alert(r.message, "สำเร็จ");
+    start();
+  } catch (e) { App.alert(e.message); }
+};
+
+// ---------- แท็บ ----------
+document.querySelectorAll(".tabs button").forEach((b) => (b.onclick = () => openTab(b.dataset.tab)));
+$("room").onchange = () => openTab(currentTab);
+
+async function openTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll(".tabs button").forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
+  ["today", "manual", "history", "homeroom", "service", "conduct", "parents"].forEach((t) => $("tab-" + t).classList.toggle("hidden", t !== tab));
+  try {
+    App.loading("กำลังโหลดข้อมูล...");
+    if (tab === "today" || tab === "manual") await loadToday();
+    if (tab === "history") await loadHistory();
+    if (tab === "homeroom") await loadHomeroom();
+    if (tab === "service") await TeacherAddons.loadService();
+    if (tab === "conduct") await TeacherAddons.loadConduct();
+    if (tab === "parents") await TeacherParents.load();
+    App.close();
+  } catch (e) { App.alert(e.message); }
+}
+const room = () => $("room").value;
+
+// ---------- 2.1 + 2.3 ----------
+async function loadToday() {
+  const r = await App.api("class.today", { classroom: room() });
+  todayRows = r.rows;
+  $("todayTitle").textContent = `สรุปวันที่ ${App.thaiDate(r.date)} ห้อง ม.${room()}`;
+  const s = r.summary, line = (n, x) => `<tr><th>${n}</th><td>${x.total}</td><td>${x.present}</td><td>${x.late}</td><td>${x.absent}</td></tr>`;
+  const all = { total: s.male.total + s.female.total, present: s.male.present + s.female.present, late: s.male.late + s.female.late, absent: s.male.absent + s.female.absent };
+  $("sumBody").innerHTML = line("ชาย", s.male) + line("หญิง", s.female) + line("รวม", all);
+  $("listBody").innerHTML = r.rows.map((x) => {
+    const cls = x.status === "ปกติ" ? "ok" : x.status === "สาย" ? "late" : "absent";
+    const extra = x.method === "teacher" ? `<br><small class="muted">${App.esc(x.note)}</small>` : "";
+    const out = x.out ? `<br><small class="muted">กลับ ${x.out}${x.early ? " (ก่อนเวลา)" : ""}</small>` : "";
+    return `<tr><td>${x.number}</td><td>${App.esc(x.name)}${extra}</td><td><span class="badge ${cls}">${x.status}</span></td><td>${x.time ?? "-"}${out}</td></tr>`;
+  }).join("");
+  // รายชื่อสำหรับเช็คแทน
+  const notYet = r.rows.filter((x) => x.status === "ยังไม่มา");
+  $("manualList").innerHTML = notYet.length
+    ? notYet.map((x) => `<label class="check-item" style="color:var(--text)"><input type="checkbox" class="mChk" value="${x.studentId}"> ${x.number}. ${App.esc(x.name)}</label>`).join("")
+    : `<p class="muted">นักเรียนทุกคนลงเวลาแล้ว</p>`;
+  $("chkAll").checked = false;
+}
+$("btnRefresh").onclick = () => openTab("today");
+
+// ---------- 2.2 เช็คชื่อแทน ----------
+$("chkAll").onchange = (e) => document.querySelectorAll(".mChk").forEach((c) => (c.checked = e.target.checked));
+$("mNote").onchange = () => $("mNoteOther").classList.toggle("hidden", $("mNote").value !== "__other");
+
+$("btnManual").onclick = async () => {
+  const ids = [...document.querySelectorAll(".mChk:checked")].map((c) => c.value);
+  if (!ids.length) return App.alert("กรุณาเลือกนักเรียนอย่างน้อย 1 คน");
+  const note = $("mNote").value === "__other" ? $("mNoteOther").value.trim() : $("mNote").value;
+  if (!note) return App.alert("กรุณาพิมพ์เหตุผล");
+  const status = document.querySelector("input[name=mStatus]:checked").value;
+  if (!(await App.confirm(`ยืนยันเช็คชื่อ ${ids.length} คน\nสถานะ: ${status}\nหมายเหตุ: ${note}`))) return;
+  try {
+    App.loading("กำลังอ่านพิกัดของครู...");
+    let loc = {};
+    try { loc = await App.getLocation(); } catch { /* ถ้าอ่านพิกัดไม่ได้ ยังบันทึกได้ แต่ไม่มีพิกัด */ }
+    App.loading("กำลังบันทึก...");
+    const r = await App.api("class.manualCheckin", { classroom: room(), studentIds: ids, status, note, lat: loc.lat, lng: loc.lng });
+    await App.alert(`บันทึกแล้ว ${r.saved} คน` + (r.skipped ? ` (ข้าม ${r.skipped} คนที่ลงเวลาไปแล้ว)` : ""), "สำเร็จ");
+    openTab("manual");
+  } catch (e) { App.alert(e.message); }
+};
+
+// ---------- 2.4 ตารางสะสม ----------
+async function loadHistory() {
+  const r = await App.api("class.history", { classroom: room() });
+  const dd = (d) => `${Number(d.slice(8))}/${Number(d.slice(5, 7))}`;
+  const head = `<tr><th class="sticky">เลขที่ ชื่อ</th><th>ขาด</th><th>สาย</th>${r.days.map((d) => `<th>${dd(d)}</th>`).join("")}</tr>`;
+  const body = r.students.map((s) =>
+    `<tr><td class="sticky">${s.number}. ${App.esc(s.name)}</td><td>${s.absent}</td><td>${s.late}</td>${s.marks.map((m) => `<td class="mark-${m}">${m}</td>`).join("")}</tr>`).join("");
+  $("histTable").innerHTML = r.days.length ? `<thead>${head}</thead><tbody>${body}</tbody>` : `<tr><td>ยังไม่มีวันเรียนในภาคเรียนนี้</td></tr>`;
+}
+
+// ---------- 2.5 โฮมรูม ----------
+async function loadHomeroom() {
+  const r = await App.api("homeroom.list", { classroom: room() });
+  homeroomLogs = r.logs;
+  $("hList").innerHTML = r.logs.length
+    ? r.logs.map((l) => `<p><b>${App.thaiDate(l.log_date)}</b><br>${App.esc(l.content)}</p>`).join("")
+    : "ยังไม่มีบันทึก";
+  fillHomeroom();
+}
+function fillHomeroom() {
+  const old = homeroomLogs.find((l) => l.log_date === $("hDate").value);
+  $("hText").value = old ? old.content : "";
+  $("hCount").textContent = `${$("hText").value.length}/500`;
+}
+$("hDate").onchange = fillHomeroom;
+$("hText").oninput = () => ($("hCount").textContent = `${$("hText").value.length}/500`);
+$("btnHSave").onclick = async () => {
+  try {
+    App.loading("กำลังบันทึก...");
+    await App.api("homeroom.save", { classroom: room(), date: $("hDate").value, content: $("hText").value });
+    await App.alert("บันทึกกิจกรรมโฮมรูมแล้ว", "สำเร็จ");
+    openTab("homeroom");
+  } catch (e) { App.alert(e.message); }
+};
+</script>
+<script src="js/teacher-addons.js"></script>
+<script src="js/teacher-parents.js"></script>
+</body>
+</html>

@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ลงเวลานักเรียน</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/card.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+<header>ลงเวลานักเรียน <small data-school></small></header>
+<main>
+
+  <!-- ===== 1.3 ลงทะเบียน: กรอกรหัส ===== -->
+  <section id="secLookup" class="card hidden">
+    <h2>ลงทะเบียนครั้งแรก</h2>
+    <label for="stuId">เลขประจำตัวนักเรียน 5 หลัก</label>
+    <input id="stuId" inputmode="numeric" maxlength="5" placeholder="เช่น 12345">
+    <button id="btnLookup">ค้นหาข้อมูล</button>
+    <div id="lookupResult" class="hidden">
+      <p id="lookupInfo"></p>
+      <p class="muted">ถ้าข้อมูลถูกต้อง กดปุ่มด้านล่างเพื่อบันทึกใบหน้า 5 มุม</p>
+      <button id="btnStartReg">ข้อมูลถูกต้อง เริ่มบันทึกใบหน้า</button>
+    </div>
+  </section>
+
+  <!-- ===== 1.3 ลงทะเบียน: เก็บใบหน้าหลายมุม ===== -->
+  <section id="secRegister" class="card hidden">
+    <h2>บันทึกใบหน้า</h2>
+    <div class="camera"><video id="regVideo" playsinline muted></video><div class="oval"></div><div class="hint" id="regHint"></div></div>
+    <div class="steps" id="regSteps"></div>
+    <button id="btnRegShot">ถ่ายภาพมุมนี้</button>
+  </section>
+
+  <!-- ===== หน้าหลัก ===== -->
+  <section id="secHome" class="hidden">
+    <div class="card">
+      <h2 id="homeName"></h2>
+      <p class="muted" id="homeClass"></p>
+      <div class="big-status" id="homeStatus"></div>
+      <p class="muted center" id="homeTimes"></p>
+    </div>
+    <button id="btnIn">ลงเวลามาเรียน (เซลฟี่)</button>
+    <button id="btnOut" class="secondary">ลงเวลากลับบ้าน</button>
+    <div class="row">
+      <div><button id="btnCard" class="secondary">บัตรนักเรียน</button></div>
+      <div><button id="btnIns" class="secondary">บัตรประกัน</button></div>
+    </div>
+    <div class="row">
+      <div class="hidden" id="wrapService"><button id="btnService" class="secondary">กิจกรรมเพื่อสังคม</button></div>
+      <div class="hidden" id="wrapConduct"><button id="btnConduct" class="secondary">คะแนนความประพฤติ</button></div>
+    </div>
+  </section>
+
+  <!-- ===== กิจกรรมเพื่อสังคมและสาธารณประโยชน์ ===== -->
+  <section id="secService" class="hidden">
+    <div class="card">
+      <h2>กิจกรรมเพื่อสังคมและสาธารณประโยชน์</h2>
+      <p class="muted" id="svPeriod"></p>
+      <div class="stat-grid" id="svStats"></div>
+      <div id="svPeriods"></div>
+    </div>
+    <button id="btnSvNew">+ บันทึกกิจกรรมใหม่</button>
+
+    <div class="card hidden" id="svForm">
+      <h2>บันทึกกิจกรรม</h2>
+      <div class="row">
+        <div><label for="svDate">วันที่ทำกิจกรรม</label><input id="svDate" type="date"></div>
+        <div><label for="svHours">จำนวนชั่วโมง</label><input id="svHours" type="number" min="0.5" max="24" step="0.5" inputmode="decimal" placeholder="เช่น 3"></div>
+      </div>
+      <label for="svDesc">คำอธิบายกิจกรรม</label>
+      <textarea id="svDesc" maxlength="300" style="min-height:90px" placeholder="เช่น เข้าร่วมอบรม อย.น้อย และช่วยแจกเอกสารให้ความรู้"></textarea>
+      <label for="svPlace">หน่วยงาน / สถานที่ที่ปฏิบัติกิจกรรม</label>
+      <input id="svPlace" maxlength="150" placeholder="เช่น รพ.สต.บ้านใหม่, วัดป่า (แห่เทียนพรรษา)">
+      <label for="svAppName">ชื่อ-สกุล ครูผู้อนุมัติ (เจ้าของงาน)</label>
+      <input id="svAppName" maxlength="100" placeholder="เช่น นางสาวสมใจ ใจดี">
+      <label for="svAppTitle">ตำแหน่งผู้อนุมัติ</label>
+      <input id="svAppTitle" maxlength="100" list="svTitles" placeholder="เช่น ครูผู้ควบคุมกิจกรรมวันเข้าพรรษา">
+      <datalist id="svTitles"><option>ครูที่ปรึกษา</option><option>ครูผู้รับผิดชอบกิจกรรม</option><option>ครูผู้ควบคุมกิจกรรม</option><option>ครูหัวหน้างานโสตทัศนศึกษา</option><option>เจ้าหน้าที่ รพ.สต.</option></datalist>
+      <label>หลักฐาน (ภาพกิจกรรม / เกียรติบัตร) 1 ภาพ</label>
+      <button id="btnSvPhoto" class="secondary" style="margin-top:0">ถ่ายภาพ / เลือกรูป</button>
+      <input id="svPhoto" type="file" accept="image/*" class="hidden">
+      <img id="svPrev" class="preview-img hidden" alt="ภาพหลักฐาน">
+      <button id="btnSvSave">บันทึก (ส่งให้ครูที่ปรึกษาอนุมัติ)</button>
+      <button id="btnSvCancel" class="secondary">ยกเลิก</button>
+    </div>
+
+    <div id="svList"></div>
+    <button id="btnSvBack" class="secondary">กลับหน้าหลัก</button>
+  </section>
+
+  <!-- ===== คะแนนความประพฤติ ===== -->
+  <section id="secConduct" class="hidden">
+    <div class="card center">
+      <h2>คะแนนความประพฤติ</h2>
+      <p class="muted" id="cdPeriod" style="margin:0"></p>
+      <div class="score-big" id="cdScore"></div>
+      <p class="muted" id="cdCount" style="margin:0"></p>
+    </div>
+    <div id="cdList"></div>
+    <button id="btnCdBack" class="secondary">กลับหน้าหลัก</button>
+  </section>
+
+  <!-- ===== บัตรประจำตัวนักเรียนอิเล็กทรอนิกส์ ===== -->
+  <section id="secCard" class="hidden">
+    <div class="idc-wrap"><div class="idc" id="idCard" role="img" aria-label="บัตรประจำตัวนักเรียน"></div></div>
+    <div class="idc-live" aria-live="off"><i aria-hidden="true"></i><span id="idcClock"></span></div>
+    <p class="muted center" style="margin:0">แถบแสงที่วิ่งผ่านบัตรและนาฬิกาเดินอยู่ แสดงว่าเป็นหน้าจอจริง ไม่ใช่ภาพที่บันทึกไว้</p>
+    <button id="btnShowCid" class="secondary">แสดงเลขประจำตัวประชาชนเต็ม</button>
+    <p class="muted center">ข้อมูลไม่ถูกต้อง หรือยังไม่มีรูป กรุณาแจ้งครูที่ปรึกษา</p>
+    <button id="btnCardBack" class="secondary">กลับหน้าหลัก</button>
+  </section>
+
+  <!-- ===== บัตรประกันอุบัติเหตุกลุ่ม ===== -->
+  <section id="secIns" class="hidden">
+    <div class="card">
+      <h2>บัตรประกันอุบัติเหตุกลุ่ม</h2>
+      <p class="muted" id="insWho"></p>
+      <div id="insBody"></div>
+    </div>
+    <button id="btnInsBack" class="secondary">กลับหน้าหลัก</button>
+  </section>
+
+  <!-- ===== 1.4 / 1.5 เซลฟี่ ===== -->
+  <section id="secSelfie" class="card hidden">
+    <h2 id="selfieTitle">เซลฟี่ลงเวลา</h2>
+    <div class="camera"><video id="selfieVideo" playsinline muted></video><div class="oval"></div><div class="hint">มองตรงที่กล้อง ให้ใบหน้าอยู่ในกรอบ</div></div>
+    <button id="btnSelfieShot">ถ่ายและยืนยัน</button>
+    <button id="btnSelfieCancel" class="secondary">ยกเลิก</button>
+  </section>
+
+  <!-- ===== 1.5 การออกนอกบริเวณโรงเรียน ===== -->
+  <section id="secEarly" class="card hidden">
+    <h2>การออกนอกบริเวณโรงเรียน</h2>
+    <p id="earlyInfo"></p>
+    <label for="fReason">เหตุผลการออกนอกบริเวณโรงเรียนก่อนเวลา</label>
+    <textarea id="fReason" maxlength="300" style="min-height:90px"></textarea>
+    <label for="fPickup">ชื่อ-สกุล ผู้มารับ</label>
+    <input id="fPickup" maxlength="100">
+    <label for="fRelation">ความสัมพันธ์กับนักเรียน</label>
+    <input id="fRelation" list="relations" maxlength="50" placeholder="เช่น บิดา มารดา ตา ยาย">
+    <datalist id="relations"><option>บิดา</option><option>มารดา</option><option>ปู่</option><option>ย่า</option><option>ตา</option><option>ยาย</option><option>พี่</option><option>ผู้ปกครอง</option></datalist>
+    <label for="fPhone">เบอร์โทรศัพท์ผู้มารับ</label>
+    <input id="fPhone" type="tel" inputmode="tel" maxlength="12" placeholder="0812345678">
+    <button id="btnIdCard" class="secondary">ถ่ายภาพบัตรประชาชน/บัตรราชการของผู้มารับ (กล้องหลัง)</button>
+    <input id="fIdCard" type="file" accept="image/*" capture="environment" class="hidden">
+    <img id="idPreview" class="preview-img hidden" alt="ภาพบัตร">
+    <button id="btnEarlySubmit">บันทึกและลงเวลากลับ</button>
+    <button id="btnEarlyCancel" class="secondary">ยกเลิก</button>
+  </section>
+
+</main>
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.js"></script>
+<script src="js/config.js"></script>
+<script src="js/common.js"></script>
+<script src="js/face.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const sections = ["secLookup", "secRegister", "secHome", "secSelfie", "secEarly", "secCard", "secIns", "secService", "secConduct"];
+function show(id) {
+  sections.forEach((s) => $(s).classList.toggle("hidden", s !== id)); window.scrollTo(0, 0);
+  if (id !== "secCard") stopCardClock();
+}
+
+// มุมใบหน้าที่ต้องเก็บตอนลงทะเบียน  check = เงื่อนไขค่า yaw (หันซ้าย/ขวา)
+const POSES = [
+  { text: "มองตรงที่กล้อง", check: (y) => Math.abs(y) < 0.12 },
+  { text: "หันหน้าไปทางซ้ายเล็กน้อย", check: (y) => Math.abs(y) > 0.08 },
+  { text: "หันหน้าไปทางขวาเล็กน้อย", check: (y) => Math.abs(y) > 0.08 },
+  { text: "เงยหน้าขึ้นเล็กน้อย", check: () => true },
+  { text: "ก้มหน้าลงเล็กน้อย", check: () => true },
+];
+let regStudentId = null, regDescriptors = [], lastYaw = null;
+let selfieMode = "in", pending = null, idCardData = null;
+
+// ---------- เริ่มต้น ----------
+(async () => {
+  try {
+    await App.init(CONFIG.LIFF_STUDENT);
+    await loadHome();
+  } catch (e) { App.alert(e.message); }
+})();
+
+async function loadHome() {
+  App.loading("กำลังโหลดข้อมูล...");
+  const r = await App.api("student.me");
+  App.close();
+  if (!r.registered) return show("secLookup");
+  $("homeName").textContent = r.student.name;
+  $("homeClass").textContent = `ชั้น ม.${r.student.classroom} เลขที่ ${r.student.number} | รหัส ${r.student.studentId}`;
+  const t = r.today;
+  $("homeStatus").innerHTML = t
+    ? `<span class="badge ${t.status === "สาย" ? "late" : "ok"}">มาเรียนแล้ว (${t.status})</span>`
+    : `<span class="badge absent">วันนี้ยังไม่ได้ลงเวลา</span>`;
+  $("homeTimes").textContent = [t ? `เข้า ${t.checkIn}` : "", t?.checkOut ? `กลับ ${t.checkOut}` : "",
+    `สายหลัง ${r.lateTime} น. เลิกเรียน ${r.endTime} น.`].filter(Boolean).join(" | ");
+  $("btnIn").classList.toggle("hidden", !!t);
+  $("btnOut").classList.toggle("hidden", !t || !!t.checkOut);
+  $("wrapService").classList.toggle("hidden", !r.addons?.service);
+  $("wrapConduct").classList.toggle("hidden", !r.addons?.conduct);
+  show("secHome");
+}
+
+// ---------- 1.3 ลงทะเบียน ----------
+$("btnLookup").onclick = async () => {
+  try {
+    App.loading("กำลังค้นหา...");
+    const r = await App.api("student.lookup", { studentId: $("stuId").value.trim() });
+    App.close();
+    regStudentId = r.student.studentId;
+    $("lookupInfo").innerHTML = `<b>${App.esc(r.student.name)}</b><br>ชั้น ม.${App.esc(r.student.classroom)} เลขที่ ${r.student.number} เพศ${App.esc(r.student.gender)}`;
+    $("lookupResult").classList.remove("hidden");
+  } catch (e) { App.alert(e.message); }
+};
+
+$("btnStartReg").onclick = async () => {
+  try {
+    App.loading("กำลังโหลดระบบจดจำใบหน้า...\n(ครั้งแรกอาจใช้เวลาสักครู่)");
+    await Face.load();
+    show("secRegister");
+    await Face.start($("regVideo"));
+    App.close();
+    regDescriptors = [];
+    renderRegStep();
+  } catch (e) { App.alert(e.message); }
+};
+
+function renderRegStep() {
+  const i = regDescriptors.length;
+  $("regSteps").innerHTML = POSES.map((_, k) => `<span class="${k < i ? "done" : ""}"></span>`).join("");
+  $("regHint").textContent = `มุมที่ ${i + 1}/${POSES.length}: ${POSES[i].text}`;
+}
+
+$("btnRegShot").onclick = async () => {
+  const i = regDescriptors.length;
+  try {
+    $("btnRegShot").disabled = true;
+    const r = await Face.capture($("regVideo"));
+    if (!POSES[i].check(r.yaw)) throw new Error("มุมใบหน้ายังไม่ตรงตามคำแนะนำ: " + POSES[i].text);
+    // ทุกมุมต้องเป็นคนเดียวกับมุมแรก
+    if (i > 0 && Face.distance(regDescriptors[0], r.descriptor) > 0.6) throw new Error("ใบหน้าไม่ตรงกับภาพแรก กรุณาถ่ายใหม่");
+    regDescriptors.push(r.descriptor);
+    if (regDescriptors.length < POSES.length) return renderRegStep();
+    Face.stop();
+    App.loading("กำลังบันทึกข้อมูลใบหน้า...");
+    await App.api("student.register", { studentId: regStudentId, descriptors: regDescriptors });
+    await App.alert("ลงทะเบียนใบหน้าสำเร็จ ต่อไปใช้เซลฟี่ลงเวลาได้เลย", "สำเร็จ");
+    await loadHome();
+  } catch (e) {
+    App.alert(e.message);
+  } finally { $("btnRegShot").disabled = false; }
+};
+
+// ---------- 1.4 / 1.5 เซลฟี่ ----------
+async function openSelfie(mode) {
+  selfieMode = mode;
+  $("selfieTitle").textContent = mode === "in" ? "เซลฟี่ลงเวลามาเรียน" : "เซลฟี่ลงเวลากลับ";
+  try {
+    App.loading("กำลังเปิดกล้อง...");
+    await Face.load();
+    show("secSelfie");
+    await Face.start($("selfieVideo"));
+    App.close();
+  } catch (e) { App.alert(e.message); show("secHome"); }
+}
+$("btnIn").onclick = () => openSelfie("in");
+$("btnOut").onclick = () => openSelfie("out");
+$("btnSelfieCancel").onclick = () => { Face.stop(); show("secHome"); };
+
+$("btnSelfieShot").onclick = async () => {
+  try {
+    App.loading("กำลังตรวจใบหน้าและตำแหน่ง...");
+    const [face, loc] = await Promise.all([Face.capture($("selfieVideo")), App.getLocation()]);
+    const payload = { descriptor: face.descriptor, lat: loc.lat, lng: loc.lng, accuracy: loc.accuracy };
+    if (selfieMode === "in") {
+      const r = await App.api("student.checkin", payload);
+      Face.stop();
+      await App.alert(r.already
+        ? `วันนี้คุณลงเวลาไปแล้วเมื่อ ${r.time} น. (${r.status})`
+        : `ลงเวลามาเรียนสำเร็จ\nวัน${r.dayName} เวลา ${r.time} น.\nสถานะ: ${r.status}`, "สำเร็จ");
+      return loadHome();
+    }
+    // ลงเวลากลับ
+    const r = await App.api("student.checkout", payload);
+    Face.stop();
+    if (r.needEarlyForm) {
+      App.close();
+      const ok = await App.confirm(`ขณะนี้ยังไม่ถึงเวลาเลิกเรียน (${r.endTime} น.)\nต้องการออกนอกบริเวณโรงเรียนก่อนเวลาหรือไม่?`, "ใช่ กรอกแบบฟอร์ม", "ไม่ใช่");
+      if (!ok) return show("secHome");
+      pending = payload;
+      idCardData = null;
+      $("idPreview").classList.add("hidden");
+      $("earlyInfo").innerHTML = `<b>${App.esc(r.student.name)}</b><br>ชั้น ม.${App.esc(r.student.classroom)} เลขที่ ${r.student.number} รหัส ${r.student.studentId}`;
+      return show("secEarly");
+    }
+    await App.alert(r.already ? `ลงเวลากลับไปแล้วเมื่อ ${r.time} น.` : `ลงเวลากลับสำเร็จ เวลา ${r.time} น.`, "สำเร็จ");
+    loadHome();
+  } catch (e) { App.alert(e.message); }
+};
+
+// ---------- 1.5 แบบฟอร์มออกนอกบริเวณโรงเรียน ----------
+$("btnIdCard").onclick = () => $("fIdCard").click();
+$("fIdCard").onchange = async (ev) => {
+  const file = ev.target.files[0];
+  if (!file) return;
+  try {
+    App.loading("กำลังย่อขนาดรูป...");
+    idCardData = await App.compressImage(file, 1000, 0.6);
+    $("idPreview").src = idCardData;
+    $("idPreview").classList.remove("hidden");
+    App.close();
+  } catch (e) { App.alert(e.message); }
+};
+$("btnEarlyCancel").onclick = () => show("secHome");
+
+$("btnEarlySubmit").onclick = async () => {
+  const form = {
+    reason: $("fReason").value.trim(), pickupName: $("fPickup").value.trim(),
+    relation: $("fRelation").value.trim(), phone: $("fPhone").value.trim(),
+  };
+  if (Object.values(form).some((v) => !v)) return App.alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+  if (!idCardData) return App.alert("กรุณาถ่ายภาพบัตรของผู้มารับ");
+  try {
+    App.loading("กำลังบันทึกข้อมูล...");
+    // ใช้ข้อมูลใบหน้า/พิกัดจากเซลฟี่ก่อนหน้า ระบบหลังบ้านตรวจซ้ำอีกครั้ง
+    const r = await App.api("student.checkout", { ...pending, form, idCardImage: idCardData });
+    await App.alert(`บันทึกการออกนอกบริเวณโรงเรียนแล้ว\nวัน${r.dayName} เวลา ${r.time} น.`, "สำเร็จ");
+    ["fReason", "fPickup", "fRelation", "fPhone"].forEach((id) => ($(id).value = ""));
+    loadHome();
+  } catch (e) { App.alert(e.message); }
+};
+
+// ---------- บัตรประจำตัวนักเรียนอิเล็กทรอนิกส์ ----------
+let cardData = null, cidShown = false, cidTimer = null, clockTimer = null;
+const fmtCid = (c) => c ? `${c[0]}-${c.slice(1, 5)}-${c.slice(5, 10)}-${c.slice(10, 12)}-${c[12]}` : "–";
+const maskCid = (c) => c ? `${c[0]}-${c.slice(1, 5)}-xxxxx-xx-${c[12]}` : "–";
+
+function renderCard() {
+  const c = cardData.card, s = cardData.school, e = App.esc;
+  const schoolName = s.name || CONFIG.SCHOOL_NAME;
+  const nameEn = [c.prefixEn, c.firstNameEn, c.lastNameEn].filter(Boolean).join(" ");
+  const logo = s.logoUrl ? `<img class="idc-logo" src="${e(s.logoUrl)}" alt="">` : `<div class="idc-logo ph" aria-hidden="true">ตรา</div>`;
+  const photo = c.photoUrl ? `<img class="idc-photo" src="${e(c.photoUrl)}" alt="รูปถ่ายนักเรียน">` : `<div class="idc-photo ph">ยังไม่มีรูป</div>`;
+  $("idCard").setAttribute("aria-label", `บัตรประจำตัวนักเรียน ${c.prefix}${c.firstName} ${c.lastName}`);
+  $("idCard").innerHTML = `
+    <div class="idc-head">${logo}
+      <div><div class="idc-school">${e(schoolName)}</div>
+        ${s.nameEn ? `<div class="idc-school-en">${e(s.nameEn)}</div>` : ""}
+        <div class="idc-aff">${e(s.affiliation)}${s.areaOffice ? " · " + e(s.areaOffice) : ""}</div></div>
+    </div>
+    <div class="idc-body">
+      ${s.logoUrl ? `<img class="idc-wm" src="${e(s.logoUrl)}" alt="">` : ""}
+      ${photo}
+      <div class="idc-info">
+        <div class="idc-title">บัตรประจำตัวนักเรียน · STUDENT ID CARD</div>
+        <div class="idc-name">${e(c.prefix)}${e(c.firstName)} ${e(c.lastName)}</div>
+        ${nameEn ? `<div class="idc-en">${e(nameEn)}</div>` : ""}
+        <div class="idc-row"><span>ชั้น</span><b>ม.${e(c.classroom)}</b><span>เลขที่</span><b>${e(c.number)}</b></div>
+        <div class="idc-row"><span>เลขประจำตัวนักเรียน</span><b>${e(c.studentId)}</b></div>
+        <div class="idc-row"><span>เลขประจำตัวประชาชน</span><b id="cidText">${cidShown ? fmtCid(c.citizenId) : maskCid(c.citizenId)}</b></div>
+      </div>
+    </div>
+    <div class="idc-foot"><span>ปีการศึกษา ${e(cardData.academicYear)}</span><span>ใช้แทนบัตรจริงภายในโรงเรียน</span></div>`;
+  $("btnShowCid").classList.toggle("hidden", !c.citizenId);
+  $("btnShowCid").textContent = cidShown ? "ซ่อนเลขประจำตัวประชาชน" : "แสดงเลขประจำตัวประชาชนเต็ม";
+}
+function tickClock() {
+  $("idcClock").textContent = "หน้าจอสด " + new Date().toLocaleString("th-TH", {
+    day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
+}
+function stopCardClock() { clearInterval(clockTimer); clockTimer = null; clearTimeout(cidTimer); cidShown = false; }
+
+$("btnCard").onclick = async () => {
+  try {
+    App.loading("กำลังเปิดบัตรนักเรียน...");
+    cardData = await App.api("student.card");     // ขอใหม่ทุกครั้ง เพราะลิงก์รูปหมดอายุใน 10 นาที
+    cidShown = false;
+    renderCard();
+    show("secCard");
+    tickClock(); clockTimer = setInterval(tickClock, 1000);
+    App.close();
+  } catch (e) { App.alert(e.message); }
+};
+$("btnShowCid").onclick = () => {
+  cidShown = !cidShown; renderCard();
+  clearTimeout(cidTimer);
+  if (cidShown) cidTimer = setTimeout(() => { cidShown = false; renderCard(); }, 30000);   // ซ่อนเองใน 30 วินาที
+};
+$("btnCardBack").onclick = () => show("secHome");
+
+// ---------- บัตรประกันอุบัติเหตุกลุ่ม ----------
+$("btnIns").onclick = async () => {
+  try {
+    App.loading("กำลังเปิดบัตรประกัน...");
+    const r = await App.api("student.insurance");
+    $("insWho").textContent = `${$("homeName").textContent} · ปีการศึกษา ${r.academicYear}`;
+    $("insBody").innerHTML = (r.images.length
+      ? r.images.map((u, i) => `<img class="ins-img" src="${App.esc(u)}" alt="บัตรประกันอุบัติเหตุกลุ่ม ด้านที่ ${i + 1}">`).join("")
+      : `<p class="muted">โรงเรียนยังไม่ได้อัปโหลดภาพบัตรประกัน กรุณาติดต่อครูที่ปรึกษา</p>`)
+      + (r.note ? `<div class="ins-note">${App.esc(r.note)}</div>` : "");
+    show("secIns");
+    App.close();
+  } catch (e) { App.alert(e.message); }
+};
+$("btnInsBack").onclick = () => show("secHome");
+</script>
+<script src="js/student-addons.js"></script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>แบบฟอร์มนักเรียน</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/forms.css">
+  <script src="js/theme.js"></script>
+</head>
+<body class="forms">
+<div class="doc-head">
+  <div class="crest" id="crest">ฟอร์ม</div>
+  <h1 id="docTitle">แบบฟอร์มนักเรียน</h1>
+  <div class="school" data-school></div>
+  <span class="form-code hidden" id="docCode"></span>
+</div>
+<main>
+  <section id="viewMenu" class="hidden">
+    <div class="who" id="who"></div>
+    <div id="formList"></div>
+  </section>
+  <section id="viewForm" class="hidden"></section>
+  <section id="viewDone" class="hidden"></section>
+</main>
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script src="js/config.js"></script>
+<script src="js/common.js"></script>
+<script src="js/form-engine.js"></script>
+<script src="js/form-pp8.js"></script>
+<script src="js/form-sdq.js"></script>
+<script src="js/form-eq.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const META = {
+  pp8: { code: "ปพ.8", ico: "ปพ.8", title: "ระเบียนสะสมนักเรียนรายบุคคล", sub: "ข้อมูลส่วนตัว ครอบครัว สุขภาพ การเรียน (9 ส่วน)" },
+  sdq: { code: "SDQ", ico: "SDQ", title: "แบบประเมินตนเอง (SDQ) ฉบับนักเรียน", sub: "25 ข้อ + คำถามเพิ่มเติม" },
+  eq:  { code: "EQ", ico: "EQ", title: "แบบประเมินความฉลาดทางอารมณ์ (EQ)", sub: "อายุ 12-17 ปี 52 ข้อ" },
+};
+let status = null;
+
+function show(v) {
+  ["viewMenu", "viewForm", "viewDone"].forEach((x) => $(x).classList.toggle("hidden", x !== v));
+  window.scrollTo(0, 0);
+}
+function setHead(form) {
+  const m = META[form];
+  $("docTitle").textContent = m ? m.title : "แบบฟอร์มนักเรียน";
+  $("crest").textContent = m ? m.ico : "ฟอร์ม";
+  $("docCode").textContent = m ? m.code : "";
+  $("docCode").classList.toggle("hidden", !m);
+}
+const draftKey = (form) => `draft_${form}_${status.student.studentId}_${form === "pp8" ? "all" : status.period}`;
+const thai = (iso) => new Date(iso).toLocaleString("th-TH", { dateStyle: "medium", timeStyle: "short" });
+
+// ---------- เริ่มต้น ----------
+(async () => {
+  try {
+    await App.init(CONFIG.LIFF_FORMS);
+    const want = new URLSearchParams(location.search).get("f");   // ริชเมนูส่ง ?f=pp8 / sdq / eq มาได้
+    await loadStatus();
+    if (want && META[want]) openForm(want); else renderMenu();
+  } catch (e) {
+    App.alert(e.message.includes("ยังไม่ได้ลงทะเบียน")
+      ? "กรุณาลงทะเบียนใบหน้าในระบบลงเวลานักเรียนก่อน จึงจะกรอกแบบฟอร์มได้"
+      : e.message);
+  }
+})();
+
+async function loadStatus(withData) {
+  App.loading("กำลังโหลดข้อมูล...");
+  status = await App.api("forms.status", withData ? { withData } : {});
+  App.close();
+}
+
+// ---------- เมนู ----------
+function renderMenu() {
+  setHead(null);
+  const s = status.student;
+  $("who").innerHTML = `<b>${App.esc(s.name)}</b><br><span class="muted">ม.${App.esc(s.classroom)} เลขที่ ${s.number} | ปีการศึกษา ${status.academicYear} ภาคเรียนที่ ${status.semester}</span>`;
+  $("formList").innerHTML = status.forms.map((f) => {
+    const m = META[f.form];
+    const badge = f.done ? `<span class="st done">ทำแล้ว</span>` : f.isOpen ? `<span class="st open">ยังไม่ทำ</span>` : `<span class="st closed">ปิดรับ</span>`;
+    const sub = f.done ? `บันทึกเมื่อ ${thai(f.updatedAt)}` : f.note || m.sub;
+    return `<button class="form-card ${f.isOpen ? "" : "closed"}" data-form="${f.form}">
+      <div class="ico">${m.ico}</div><div class="t"><b>${App.esc(f.title)}</b><small>${App.esc(sub)}</small></div>${badge}</button>`;
+  }).join("") || `<p class="muted center">ยังไม่มีแบบฟอร์มที่เปิดใช้ในโรงเรียนของท่าน</p>`;
+  $("formList").querySelectorAll(".form-card").forEach((b) => (b.onclick = () => openForm(b.dataset.form)));
+  show("viewMenu");
+}
+
+// ---------- เปิดแบบฟอร์ม ----------
+async function openForm(form) {
+  const info = status.forms.find((f) => f.form === form);
+  if (!info) {                                   // แบบฟอร์มนี้ไม่อยู่ในแพ็กเกจของโรงเรียน
+    await App.alert("แบบฟอร์มนี้ยังไม่เปิดใช้ในโรงเรียนของท่าน");
+    return renderMenu();
+  }
+  if (!info.isOpen) {
+    await App.alert(`${info.title}\nยังไม่เปิดให้กรอก หรือปิดรับข้อมูลแล้ว`);
+    return renderMenu();
+  }
+  let data = {};
+  if (info.done) {
+    const ok = await App.confirm(`คุณบันทึก "${info.title}" แล้วเมื่อ ${thai(info.updatedAt)}\n\nต้องการแก้ไข/ปรับปรุงข้อมูลที่เคยบันทึกหรือไม่?`, "แก้ไขข้อมูล", "ไม่ใช่");
+    if (!ok) return renderMenu();
+    await loadStatus(form);                                           // ดึงข้อมูลเดิมมาแสดง
+    data = status.forms.find((f) => f.form === form).data || {};
+  } else {
+    try { data = JSON.parse(localStorage.getItem(draftKey(form)) || "{}"); } catch { data = {}; }
+    if (Object.keys(data).length && !(await App.confirm("พบข้อมูลที่กรอกค้างไว้ ต้องการกรอกต่อหรือไม่?", "กรอกต่อ", "เริ่มใหม่"))) data = {};
+  }
+  if (form === "pp8") data.certify = false;                           // ต้องติ๊กรับรองใหม่ทุกครั้ง
+
+  setHead(form);
+  show("viewForm");
+  const steps = form === "pp8" ? pp8Steps(status.student) : form === "sdq" ? sdqSteps() : eqSteps();
+  FormEngine.create({
+    root: $("viewForm"), steps, data, draftKey: draftKey(form),
+    submitText: info.done ? "บันทึกการปรับปรุง" : "ส่งแบบฟอร์ม",
+    onExit: () => renderMenu(),
+    onSubmit: (d) => submit(form, d, info.done),
+  });
+}
+
+// ---------- ส่งข้อมูล ----------
+async function submit(form, data, wasDone) {
+  if (!(await App.confirm(wasDone ? "ยืนยันบันทึกทับข้อมูลเดิมด้วยข้อมูลใหม่นี้?" : "ตรวจทานเรียบร้อยแล้ว ยืนยันส่งแบบฟอร์ม?"))) return;
+  try {
+    App.loading("กำลังบันทึก...");
+    let r = await App.api("forms.submit", { form, data, confirmUpdate: wasDone });
+    if (r.needConfirm) {                                              // เคยส่งจากเครื่องอื่นมาก่อน
+      App.close();
+      if (!(await App.confirm(`แบบฟอร์มนี้เคยบันทึกแล้วเมื่อ ${thai(r.submittedAt)}\nต้องการบันทึกทับด้วยข้อมูลใหม่หรือไม่?`, "บันทึกทับ", "ยกเลิก"))) return;
+      App.loading("กำลังบันทึก...");
+      r = await App.api("forms.submit", { form, data, confirmUpdate: true });
+    }
+    App.close();
+    try { localStorage.removeItem(draftKey(form)); } catch { /* ข้าม */ }
+    showDone(form, r);
+  } catch (e) { App.alert(e.message); }
+}
+
+function showDone(form, r) {
+  const resultHtml = CONFIG.SHOW_RESULTS_TO_STUDENT && r.result
+    ? `<h3 class="sub" style="text-align:left">ผลการประเมิน</h3>${form === "sdq" ? sdqResultHtml(r.result) : eqResultHtml(r.result)}`
+    : form === "pp8" ? "" : `<p class="muted">ครูที่ปรึกษาจะนำผลไปใช้ในการดูแลช่วยเหลือ หากมีเรื่องไม่สบายใจ ปรึกษาครูที่ปรึกษาหรือครูแนะแนวได้เสมอ</p>`;
+  $("viewDone").innerHTML = `<div class="paper"><div class="done-box">
+      <div class="tick">✓</div>
+      <h2>${r.updated ? "ปรับปรุงข้อมูลเรียบร้อย" : "บันทึกเรียบร้อย"}</h2>
+      <p class="muted">${App.esc(META[form].title)}</p></div>
+      ${resultHtml}
+      <button class="primary" id="btnMenu">กลับเมนูแบบฟอร์ม</button>
+      <button class="secondary" id="btnClose">ปิดหน้านี้</button></div>`;
+  $("btnMenu").onclick = async () => { await loadStatus(); renderMenu(); };
+  $("btnClose").onclick = () => (liff.isInClient() ? liff.closeWindow() : renderMenu());
+  show("viewDone");
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+/* ===== ระบบดูแลช่วยเหลือนักเรียน (หน้าจอครู) ===== */
+.care-top { position: sticky; top: 0; z-index: 8; background: var(--page); padding: 10px 16px 0; }
+.care-top select { padding: 10px; font-weight: 700; }
+.mainnav { display: flex; gap: 6px; margin-top: 10px; overflow-x: auto; }
+.mainnav button, .seg button {
+  margin: 0; width: auto; flex: 1 0 auto; padding: 10px 12px; font-size: 14px; border-radius: 999px;
+  background: var(--card); color: var(--ink); border: 1px solid var(--rule); font-weight: 700;
+}
+.mainnav button.on, .seg button.on { background: var(--navy); color: var(--btn-text); border-color: var(--navy); }
+.seg { display: flex; gap: 6px; overflow-x: auto; margin: 0 0 12px; padding-bottom: 2px; }
+.seg button { font-size: 13px; padding: 8px 12px; }
+.toolbar { display: flex; gap: 8px; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; }
+.toolbar .seg { margin: 0; }
+.toolbar select { width: auto; padding: 8px; font-size: 14px; }
+button.small { padding: 8px 12px; font-size: 14px; margin-top: 6px; width: auto; }
+.chips-sum { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.chips-sum span { font-size: 13px; padding: 4px 10px; border-radius: 999px; background: var(--card); border: 1px solid var(--rule); }
+
+/* ---------- การ์ดแบบ LINE Flex message ---------- */
+.bubble { background: var(--paper); color: var(--ink); border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(16,24,40,.12); margin-bottom: 12px; }
+.bubble .bh { background: var(--header-bg); color: var(--header-text); padding: 12px 14px; display: flex; gap: 10px; align-items: center; }
+.bubble .bh .no { flex: 0 0 36px; height: 36px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.bubble .bh b { display: block; font-size: 16px; line-height: 1.3; }
+.bubble .bh small { opacity: .85; font-size: 12px; }
+.bubble .bb { padding: 12px 14px; font-size: 14px; }
+.bubble .kv { display: flex; gap: 8px; padding: 5px 0; border-bottom: 1px dashed var(--rule); }
+.bubble .kv:last-child { border-bottom: 0; }
+.bubble .kv span { flex: 0 0 42%; color: var(--soft); }
+.bubble .kv b { flex: 1; font-weight: 400; word-break: break-word; }
+.bubble .sec { font-weight: 700; color: var(--navy); margin: 10px 0 4px; font-size: 13px; }
+.bubble .bf { padding: 8px 14px 12px; font-size: 12px; color: var(--soft); border-top: 1px solid var(--rule); }
+.bubble .flag { background: #fee2e2; color: #991b1b; border-radius: 8px; padding: 6px 10px; margin-top: 8px; font-size: 13px; }
+.bubble.empty .bb { color: var(--soft); }
+.bubble table.result { font-size: 13px; }
+.bubble table.result td, .bubble table.result th { padding: 6px 4px; white-space: normal; }
+
+/* โหมดการ์ดเลื่อน */
+.carousel { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 2px 2px 12px; -webkit-overflow-scrolling: touch; }
+.carousel .bubble { flex: 0 0 86%; max-width: 360px; scroll-snap-align: center; margin-bottom: 0; }
+.car-count { text-align: center; font-size: 13px; color: var(--soft); }
+
+/* โหมดรายการ */
+.list-row { background: var(--paper); border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--rule); overflow: hidden; }
+.list-row summary { list-style: none; display: flex; gap: 10px; align-items: center; padding: 12px; cursor: pointer; }
+.list-row summary::-webkit-details-marker { display: none; }
+.list-row .no { flex: 0 0 28px; height: 28px; border-radius: 8px; background: var(--navy); color: var(--btn-text); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.list-row .nm { flex: 1; font-size: 15px; }
+.list-row .nm small { display: block; color: var(--soft); font-size: 12px; }
+.list-row[open] summary { border-bottom: 1px solid var(--rule); background: var(--soft-bg); }
+.list-row .bubble { box-shadow: none; border-radius: 0; margin: 0; }
+
+/* ตารางติดต่อ/รายได้ */
+.data-table { background: var(--paper); border-radius: 12px; overflow-x: auto; }
+.data-table table { font-size: 13px; }
+.data-table th { position: sticky; top: 0; }
+.data-table td.money { text-align: right; font-variant-numeric: tabular-nums; }
+.data-table a { color: var(--navy-2); font-weight: 700; text-decoration: none; }
+
+/* รายชื่อสำหรับงานครู */
+.task-row { display: flex; align-items: center; gap: 10px; background: var(--paper); border: 1px solid var(--rule); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
+.task-row .nm { flex: 1; font-size: 15px; }
+.task-row .nm small { display: block; color: var(--soft); font-size: 12px; }
+.task-row .acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.task-row .acts button { margin: 0; padding: 7px 10px; font-size: 13px; width: auto; }
+
+/* ภาพเยี่ยมบ้าน */
+.photos { display: flex; flex-direction: column; gap: 14px; }
+.photo-slot { border: 1.5px dashed #c9d1db; border-radius: 12px; padding: 12px; }
+.photo-slot img { width: 100%; border-radius: 8px; display: block; max-height: 280px; object-fit: cover; }
+.ph-title { font-weight: 700; margin-bottom: 8px; }
+.ph-empty { height: 140px; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--soft); background: var(--soft-bg); border-radius: 8px; padding: 10px; }
+.analysis { background: var(--soft-bg); border: 1px solid #c7dbf5; border-radius: 12px; padding: 12px; }
+.an-head { font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+.an-sub { font-size: 13px; color: var(--soft); margin-top: 4px; }
+
+/* ตัวอย่าง PDF */
+.preview-pages img { width: 100%; display: block; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.18); border-radius: 4px; background: #fff; }
+.preview-bar { position: sticky; bottom: 0; background: var(--page); padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); display: flex; gap: 10px; }
+.preview-bar button { margin: 0; }
+
+/* ---------- หน้ารายงาน A4 (ใช้สร้าง PDF) ---------- */
+#rpHost { position: fixed; left: -10000px; top: 0; }
+.rp-page { width: 794px; height: 1123px; padding: 48px; box-sizing: border-box; background: #fff; color: #111; font-family: "Sarabun", sans-serif; font-size: 13.5px; line-height: 1.55; position: relative; margin-bottom: 10px; }
+.rp-measure { height: auto; }
+.rp-block { margin-bottom: 6px; }
+.rp-head { text-align: center; border-bottom: 2px solid #1e3a5f; padding-bottom: 10px; margin-bottom: 4px; }
+.rp-head h1 { font-size: 20px; margin: 6px 0 2px; color: #1e3a5f; }
+.rp-crest { width: 56px; height: 56px; margin: 0 auto; border-radius: 50%; border: 2px solid #b8892b; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #1e3a5f; }
+.rp-date { margin-top: 4px; font-weight: 700; }
+.rp-page h2 { font-size: 16px; color: #fff; background: #1e3a5f; padding: 4px 10px; border-radius: 4px; margin: 8px 0 4px; }
+.rp-page h3 { font-size: 14px; color: #1e3a5f; margin: 6px 0 3px; }
+.rp-t { width: 100%; border-collapse: collapse; font-size: 13px; }
+.rp-t th, .rp-t td { border: 1px solid #c9d1db; padding: 4px 6px; vertical-align: top; white-space: normal; text-align: left; }
+.rp-t th { background: #f1f5fb; width: 22%; font-weight: 700; color: #334; }
+.rp-photos { display: flex; gap: 12px; }
+.rp-photos figure { flex: 1; margin: 0; text-align: center; }
+.rp-photos img { width: 100%; height: 230px; object-fit: cover; border: 1px solid #c9d1db; }
+.rp-noimg { height: 230px; border: 1px dashed #c9d1db; display: flex; align-items: center; justify-content: center; color: #888; }
+.rp-photos figcaption { font-size: 12px; margin-top: 4px; }
+.rp-label { font-weight: 700; margin-top: 4px; }
+.rp-text { white-space: pre-wrap; padding: 2px 0 2px 8px; border-left: 3px solid #e3c98a; }
+.rp-sign { display: flex; justify-content: flex-end; margin-top: 14px; }
+.rp-sign .box { width: 380px; border: 1px solid #1e3a5f; padding: 10px 14px; text-align: center; font-size: 13px; line-height: 1.9; }
+.rp-sign .line { margin-top: 18px; }
+.rp-foot { position: absolute; bottom: 20px; left: 0; right: 0; text-align: center; font-size: 11px; color: #666; }
+.task-row .no { flex: 0 0 28px; height: 28px; border-radius: 8px; background: var(--navy); color: var(--btn-text); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; }

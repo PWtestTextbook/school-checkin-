@@ -1,0 +1,17 @@
+/* ธีม 5 · Magic Academy (โรงเรียนเวทมนตร์) */
+@import url("https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Pridi:wght@400;500;600&display=swap");
+:root {
+  --green: #6B1E2A; --green-dark: #4A1219; --btn-text: #F5E6B8;
+  --bg: #141433;
+  --bg-image: radial-gradient(1.5px 1.5px at 30px 40px, #fff, transparent), radial-gradient(1px 1px at 120px 90px, #fff, transparent), radial-gradient(1.5px 1.5px at 300px 60px, #F5E6B8, transparent), radial-gradient(ellipse at 50% 0%, #2B2B66, transparent 70%);
+  --card: #F1E3C2; --card-border: 1px solid #B8954A; --card-shadow: 0 0 0 4px #F1E3C2, 0 0 0 5px #B8954A, 0 12px 26px rgba(0,0,0,.55);
+  --text: #3A2A14; --muted: #6A5330; --line: #D6C08E;
+  --radius: 4px; --btn-radius: 30px; --btn-shadow: 0 0 16px rgba(232,200,115,.25);
+  --header-bg: #0D0D26; --header-text: #E8C873; --header-border: 1px solid #C9A24A;
+  --input-bg: #FBF4E2; --input-text: #3A2A14; --th-bg: #E8D6AD; --soft-bg: #EAD9B2;
+  --accent: #E8C873; --pick-bg: #E9D6A8;
+  --font-body: "Pridi", serif; --font-head: "Charm", cursive;
+}
+.step-head h2, .step-no, main > h2 { color: #E8C873 !important; }
+main > .muted, .step-desc { color: #C8BFA6 !important; }
+button:not(.secondary):not(.form-card):not(.review-row), .btn { border: 1.5px solid #E8C873; }
