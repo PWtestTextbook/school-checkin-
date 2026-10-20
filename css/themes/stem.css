@@ -1,0 +1,18 @@
+/* ธีม 3 · STEM Blueprint (วิทย์ คณิต วิศวะ) */
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap");
+:root {
+  --green: #FF9E3D; --green-dark: #E5822A; --btn-text: #1B1206;
+  --bg: #0E3A66;
+  --bg-image: linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px), linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+  --card: #F4F8FC; --card-border: 1.5px solid #EAF2FB; --card-shadow: 0 0 0 4px rgba(14,58,102,.6);
+  --text: #0E2A47; --muted: #4A6683; --line: #BCD0E4;
+  --radius: 0px; --btn-radius: 0px; --btn-shadow: none;
+  --header-bg: #0A2C4F; --header-text: #EAF2FB; --header-border: 1.5px solid #EAF2FB;
+  --input-bg: #ffffff; --input-text: #0E2A47; --th-bg: #E3EDF7; --soft-bg: #E8F0F8;
+  --accent: #FF9E3D; --pick-bg: #DCE9F6;
+  --font-body: "IBM Plex Sans Thai", sans-serif; --font-head: "IBM Plex Sans Thai", sans-serif;
+}
+body { background-size: 60px 60px, 60px 60px, 12px 12px, 12px 12px; }
+.step-head h2, .step-no, main > h2 { color: #EAF2FB !important; }
+main > .muted, .step-desc { color: #9EC3E8 !important; }
+.badge, .cnt, td.money, .data-table td { font-family: "IBM Plex Mono", "IBM Plex Sans Thai", monospace; }

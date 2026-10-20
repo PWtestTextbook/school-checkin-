@@ -1,0 +1,17 @@
+/* ธีม 4 · Digital Circuit (ดิจิทัล อิเล็กทรอนิกส์) */
+@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&display=swap");
+:root {
+  --green: #3EF0FF; --green-dark: #22C7D6; --btn-text: #04161A;
+  --bg: #07140F;
+  --bg-image: radial-gradient(circle at 1px 1px, rgba(57,255,136,.14) 1px, transparent 1.5px);
+  --card: #151C1A; --card-border: 1px solid #2E3B36; --card-shadow: 0 0 0 1px rgba(62,240,255,.12), 0 10px 24px rgba(0,0,0,.5);
+  --text: #D8FFF0; --muted: #8FB5A6; --line: #2E3B36;
+  --radius: 6px; --btn-radius: 4px; --btn-shadow: 0 0 14px rgba(62,240,255,.35);
+  --header-bg: #0A110E; --header-text: #3EF0FF; --header-border: 1px solid #3EF0FF;
+  --input-bg: #0E1714; --input-text: #D8FFF0; --th-bg: #101916; --soft-bg: #101916;
+  --accent: #39FF88; --pick-bg: rgba(62,240,255,.12);
+  --font-body: "Chakra Petch", sans-serif; --font-head: "Chakra Petch", sans-serif;
+}
+body { background-size: 16px 16px; }
+header, .doc-head h1 { text-shadow: 0 0 8px rgba(62,240,255,.6); }
+.camera .oval { border-color: #3EF0FF; }
