@@ -16,4 +16,4 @@
 body { background-size: 16px 16px; }
 header, .doc-head h1 { text-shadow: 0 0 8px rgba(62,240,255,.6); }
 .camera .oval { border-color: #3EF0FF; }
-.score-big .good { color: #39FF88; } .score-big .mid { color: #FFC857; } .score-big .low { color: #FF7A6B; }
+.score-big .good, .sc-good { color: #39FF88; } .score-big .mid, .sc-mid { color: #FFC857; } .score-big .low, .sc-low { color: #FF7A6B; }

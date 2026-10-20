@@ -23,5 +23,5 @@ header::after, .doc-head::after { content: ""; position: absolute; right: 14px; 
 main > .muted, .step-desc { color: #C8B993 !important; }
 /* ปุ่มหลัก: ไล่สีม่วงผ่านตัวแปร (ปุ่มแท็บ/ปุ่มรองที่ตั้งพื้นของตัวเองจะไม่โดนทับ ตัวหนังสือจึงไม่จม) */
 :root { --btn-bg-image: linear-gradient(180deg, #4B2F8C, #2A1A5A); }
-main :is(section, .card, div) > button:not(.secondary):not(.form-card):not(.review-row):not(.small):not(.small-btn):not(.theme-opt):not(.on), main > button:not(.secondary), .btn { border: 1.5px solid #F2C96B; font-family: "Charm", cursive; font-size: 20px; }
+main :is(section, .card, div) > button:not(.secondary):not(.form-card):not(.review-row):not(.small):not(.small-btn):not(.theme-opt):not(.on):not(.icon-btn), main > button:not(.secondary), .btn { border: 1.5px solid #F2C96B; font-family: "Charm", cursive; font-size: 20px; }
 .tabs button, .mainnav button, .seg button { font-family: var(--font-body); font-size: 15px; }
