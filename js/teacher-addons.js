@@ -93,7 +93,7 @@ window.TeacherAddons = (() => {
       $("cdRoomPeriod").textContent = `ห้อง ม.${room()} · ${r.periodLabel} · คะแนนเต็ม ${r.base}`;
       $("cdRoomBody").innerHTML = r.rows.map((x) => `
         <tr class="pick-row" data-sid="${e(x.studentId)}" tabindex="0"><td>${x.number}</td><td>${e(x.name)}</td><td>${x.count}</td>
-        <td><b style="color:${x.score >= r.base * 0.8 ? "#1E7A43" : x.score >= r.base * 0.6 ? "#B45309" : "#B42318"}">${x.score}</b></td></tr>`).join("");
+        <td><b class="sc-${x.score >= r.base * 0.8 ? "good" : x.score >= r.base * 0.6 ? "mid" : "low"}">${x.score}</b></td></tr>`).join("");
       $("cdRoomBody").querySelectorAll("[data-sid]").forEach((tr) => (tr.onclick = () => openConductStudent(tr.dataset.sid)));
     }
   }
