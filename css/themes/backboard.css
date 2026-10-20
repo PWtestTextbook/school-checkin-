@@ -10,6 +10,7 @@
   --header-bg: #6A3F1D; --header-text: #F4F1E8; --header-border: 6px solid #5A3518;
   --input-bg: #ffffff; --input-text: #2A2A2A; --th-bg: #F1EBDA; --soft-bg: #F3EEDF;
   --accent: #F2D16B; --pick-bg: #EEE7D2;
+  --page-text: #F4F1E8; --page-muted: #DCD6C4;
   --font-body: "Sarabun", sans-serif; --font-head: "Mali", cursive;
 }
 body { border: 10px solid #7A4B24; border-bottom: 0; min-height: 100vh; }

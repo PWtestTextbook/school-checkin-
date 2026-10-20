@@ -9,7 +9,8 @@
   --radius: 4px; --btn-radius: 30px; --btn-shadow: 0 0 16px rgba(232,200,115,.25);
   --header-bg: #0D0D26; --header-text: #E8C873; --header-border: 1px solid #C9A24A;
   --input-bg: #FBF4E2; --input-text: #3A2A14; --th-bg: #E8D6AD; --soft-bg: #EAD9B2;
-  --accent: #E8C873; --pick-bg: #E9D6A8;
+  --accent: #E8C873; --red: #9B1C1C; --pick-bg: #E9D6A8;
+  --page-text: #F5E6B8; --page-muted: #D6CCB0;
   --font-body: "Pridi", serif; --font-head: "Charm", cursive;
 }
 .step-head h2, .step-no, main > h2 { color: #E8C873 !important; }

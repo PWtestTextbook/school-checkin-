@@ -9,9 +9,11 @@
   --radius: 6px; --btn-radius: 4px; --btn-shadow: 0 0 14px rgba(62,240,255,.35);
   --header-bg: #0A110E; --header-text: #3EF0FF; --header-border: 1px solid #3EF0FF;
   --input-bg: #0E1714; --input-text: #D8FFF0; --th-bg: #101916; --soft-bg: #101916;
-  --accent: #39FF88; --pick-bg: rgba(62,240,255,.12);
+  --accent: #39FF88; --red: #FF7A6B; --pick-bg: rgba(62,240,255,.12);
+  --page-text: #D8FFF0; --page-muted: #8FB5A6;
   --font-body: "Chakra Petch", sans-serif; --font-head: "Chakra Petch", sans-serif;
 }
 body { background-size: 16px 16px; }
 header, .doc-head h1 { text-shadow: 0 0 8px rgba(62,240,255,.6); }
 .camera .oval { border-color: #3EF0FF; }
+.score-big .good { color: #39FF88; } .score-big .mid { color: #FFC857; } .score-big .low { color: #FF7A6B; }

@@ -9,7 +9,8 @@
   --radius: 6px 10px 8px 12px; --btn-radius: 30px; --btn-shadow: 0 0 22px rgba(160,110,255,.35);
   --header-bg: #0B0918; --header-text: #F2C96B; --header-border: 1px solid #9C7A38;
   --input-bg: #FBF4E2; --input-text: #3A2812; --th-bg: #E6CF9E; --soft-bg: #E8D2A4;
-  --accent: #F2C96B; --pick-bg: #E3CB96;
+  --accent: #F2C96B; --red: #9B1C1C; --pick-bg: #E3CB96;
+  --page-text: #F7E7C2; --page-muted: #D3C49E;
   --font-body: "Pridi", serif; --font-head: "Charm", cursive;
 }
 /* เทียนลอยเหนือหัวหน้าจอ (ภาพวาดเอง ไม่มีลิขสิทธิ์ผู้อื่น) */
@@ -20,4 +21,7 @@ header::after, .doc-head::after { content: ""; position: absolute; right: 14px; 
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 92'%3E%3Cpath d='M48 4C56 22 66 44 78 66L18 66C30 46 40 26 48 4Z' fill='%233B2A7A' stroke='%231E1544' stroke-width='2'/%3E%3Cellipse cx='48' cy='70' rx='46' ry='12' fill='%232E2160' stroke='%231E1544' stroke-width='2'/%3E%3Cpath d='M22 62C38 66 58 66 74 62L76 68C58 72 38 72 20 68Z' fill='%23C9A24A'/%3E%3Cpath d='M48 26l2.2 5 5.4.4-4.1 3.6 1.3 5.3L48 37.4l-4.8 2.9 1.3-5.3-4.1-3.6 5.4-.4z' fill='%23F2C96B'/%3E%3C/svg%3E") no-repeat center / contain; }
 .step-head h2, .step-no, main > h2 { color: #F2C96B !important; text-shadow: 0 0 10px rgba(255,190,90,.45); }
 main > .muted, .step-desc { color: #C8B993 !important; }
-button:not(.secondary):not(.form-card):not(.review-row):not(.small):not(.theme-opt), .btn { background-image: linear-gradient(180deg, #4B2F8C, #2A1A5A); border: 1.5px solid #F2C96B; font-family: "Charm", cursive; font-size: 20px; }
+/* ปุ่มหลัก: ไล่สีม่วงผ่านตัวแปร (ปุ่มแท็บ/ปุ่มรองที่ตั้งพื้นของตัวเองจะไม่โดนทับ ตัวหนังสือจึงไม่จม) */
+:root { --btn-bg-image: linear-gradient(180deg, #4B2F8C, #2A1A5A); }
+main :is(section, .card, div) > button:not(.secondary):not(.form-card):not(.review-row):not(.small):not(.small-btn):not(.theme-opt):not(.on), main > button:not(.secondary), .btn { border: 1.5px solid #F2C96B; font-family: "Charm", cursive; font-size: 20px; }
+.tabs button, .mainnav button, .seg button { font-family: var(--font-body); font-size: 15px; }

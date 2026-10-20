@@ -30,6 +30,8 @@
   --soft-bg: #EEF2F8;          /* กล่องรอง เช่น ข้อมูลอ้างอิง หมายเหตุ */
   --accent: #C9A227;           /* สีเน้นรอง (ทอง) */
   --pick-bg: #E6EDF8;          /* พื้นตัวเลือกที่ถูกเลือก */
+  --page-text: var(--text);    /* ตัวหนังสือที่วางบนพื้นหน้าโดยตรง (นอกการ์ด) ธีมพื้นเข้มต้องตั้งเป็นสีอ่อน */
+  --page-muted: var(--muted);
   --font-body: "Sarabun", "Noto Sans Thai", system-ui, sans-serif;
   --font-head: "Prompt", "Sarabun", sans-serif;
 }
@@ -53,12 +55,12 @@ input, select, textarea {
 textarea { min-height: 140px; resize: vertical; }
 button, .btn {
   display: block; width: 100%; padding: 14px; margin-top: 12px; border: 0; border-radius: var(--btn-radius);
-  background: var(--green); color: var(--btn-text); font-size: 17px; font-weight: 700; font-family: var(--font-head);
+  background: var(--btn-bg-image, none) var(--green); color: var(--btn-text); font-size: 17px; font-weight: 700; font-family: var(--font-head);
   box-shadow: var(--btn-shadow); cursor: pointer;
 }
 button:active { background: var(--green-dark); }
 button.secondary { background: var(--card); color: var(--text); border: 1px solid var(--line); box-shadow: none; }
-button.danger { background: var(--red); color: #fff; }
+button.danger { background: #B42318; color: #fff; }
 button:disabled { opacity: .5; }
 .hidden { display: none !important; }
 .muted { color: var(--muted); font-size: 14px; }
@@ -160,3 +162,11 @@ button.small-btn { padding: 8px; font-size: 14px; margin-top: 8px; }
 .weekbar .now small { color: var(--text); font-weight: 700; }
 .sub-box { background: var(--soft-bg); border-radius: 8px; padding: 10px 12px; margin-top: 10px; font-size: 15px; }
 .code-box { font-family: var(--font-head); font-size: 28px; letter-spacing: .18em; text-align: center; background: var(--soft-bg); border: 2px dashed var(--line); border-radius: 10px; padding: 10px; margin: 8px 0; user-select: all; }
+
+/* ---------- ตัวหนังสือที่อยู่บนพื้นหน้าโดยตรง (นอกการ์ด) ----------
+   ธีมพื้นเข้ม (กระดานดำ พิมพ์เขียว เวทมนตร์) การ์ดเป็นสีอ่อนแต่พื้นหน้าเป็นสีเข้ม
+   จึงใช้ --page-text / --page-muted แทน --text / --muted สำหรับข้อความที่ไม่ได้อยู่ในการ์ด */
+body:not(.forms) main > :is(p, label, small, .muted),
+body:not(.forms) main > :is(section, div):not(.card) > :is(p, label, small, .muted) { color: var(--page-muted); }
+body:not(.forms) main > :is(h1, h2, h3),
+body:not(.forms) main > :is(section, div):not(.card) > :is(h1, h2, h3) { color: var(--page-text); }

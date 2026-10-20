@@ -10,6 +10,7 @@
   --header-bg: #0A2C4F; --header-text: #EAF2FB; --header-border: 1.5px solid #EAF2FB;
   --input-bg: #ffffff; --input-text: #0E2A47; --th-bg: #E3EDF7; --soft-bg: #E8F0F8;
   --accent: #FF9E3D; --pick-bg: #DCE9F6;
+  --page-text: #EAF2FB; --page-muted: #B9D3EE;
   --font-body: "IBM Plex Sans Thai", sans-serif; --font-head: "IBM Plex Sans Thai", sans-serif;
 }
 body { background-size: 60px 60px, 60px 60px, 12px 12px, 12px 12px; }

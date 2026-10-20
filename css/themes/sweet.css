@@ -1,13 +1,13 @@
 /* ธีม 2 · Sweet Ribbon (หวานแหวว) */
 @import url("https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&display=swap");
 :root {
-  --green: #E6578F; --green-dark: #C23D72; --btn-text: #ffffff;
+  --green: #C2416B; --green-dark: #9E2F58; --btn-text: #ffffff;
   --bg: #FCE4EE;
   --bg-image: radial-gradient(#F7C6D9 2px, transparent 2.5px), radial-gradient(#E9D7F7 2px, transparent 2.5px);
   --card: #ffffff; --card-border: 2px solid #F7C6D9; --card-shadow: 0 8px 20px rgba(214,96,148,.18);
   --text: #4A2638; --muted: #8A4A68; --line: #F3CADB;
-  --radius: 24px; --btn-radius: 28px; --btn-shadow: 0 5px 0 #C23D72;
-  --header-bg: #F48FB1; --header-text: #ffffff; --header-border: 0 solid transparent;
+  --radius: 24px; --btn-radius: 28px; --btn-shadow: 0 5px 0 #8A2850;
+  --header-bg: #F48FB1; --header-text: #4A1830; --header-border: 0 solid transparent;
   --input-bg: #FFF8FB; --input-text: #4A2638; --th-bg: #FDE7F0; --soft-bg: #FDEFF5;
   --accent: #C7A6E8; --pick-bg: #FDE2EC;
   --font-body: "Mitr", sans-serif; --font-head: "Mitr", sans-serif;

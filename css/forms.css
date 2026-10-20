@@ -26,7 +26,7 @@ body.forms { background-color: var(--page); color: var(--ink); }
 .doc-head .school { font-size: 14px; opacity: .9; margin-top: 2px; }
 .doc-head .form-code {
   display: inline-block; margin-top: 8px; padding: 2px 12px; border-radius: 999px;
-  background: var(--gold); color: var(--btn-text); font-size: 12px; font-weight: 700;
+  background: var(--gold); color: #1B1606; font-size: 12px; font-weight: 700;
 }
 .forms main { padding: 16px; max-width: 680px; margin: 0 auto; }
 
@@ -45,18 +45,20 @@ body.forms { background-color: var(--page); color: var(--ink); }
 .form-card .t { flex: 1; }
 .form-card .t b { display: block; font-size: 16px; }
 .form-card .t small { color: var(--soft); }
-.form-card.closed { opacity: .55; }
+/* ปิดรับ: ไม่ใช้ความโปร่งใส (ทำให้ตัวหนังสือจางจนอ่านยาก) ใช้ขอบประและไอคอนสีเทาแทน */
+.form-card.closed { border-style: dashed; }
+.form-card.closed .ico { background: var(--muted); color: var(--card); }
 .st { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
 .st.done { background: #dcfce7; color: #166534; }
 .st.open { background: #fef3c7; color: #92400e; }
-.st.closed { background: #e5e7eb; color: #4b5563; }
+.st.closed { background: #e5e7eb; color: #374151; }
 
 /* ---------- ความคืบหน้าและหัวขั้นตอน ---------- */
 .progress { height: 6px; background: var(--rule); border-radius: 99px; overflow: hidden; margin-bottom: 14px; }
 .progress .bar { height: 100%; background: linear-gradient(90deg, var(--gold), #d4a63c); transition: width .3s; }
 .step-head { margin-bottom: 12px; }
-.step-no { font-size: 13px; color: var(--gold); font-weight: 700; letter-spacing: .3px; }
-.step-head h2 { font-size: 20px; margin: 2px 0 0; color: var(--navy); }
+.step-no { font-size: 13px; color: var(--muted); font-weight: 700; letter-spacing: .3px; }
+.step-head h2 { font-size: 20px; margin: 2px 0 0; color: var(--text); }
 .step-desc { color: var(--soft); font-size: 14px; margin: 4px 0 0; }
 
 /* ---------- กระดาษ ---------- */

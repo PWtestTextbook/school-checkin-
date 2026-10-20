@@ -19,7 +19,7 @@ button.small { padding: 8px 12px; font-size: 14px; margin-top: 6px; width: auto;
 /* ---------- การ์ดแบบ LINE Flex message ---------- */
 .bubble { background: var(--paper); color: var(--ink); border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(16,24,40,.12); margin-bottom: 12px; }
 .bubble .bh { background: var(--header-bg); color: var(--header-text); padding: 12px 14px; display: flex; gap: 10px; align-items: center; }
-.bubble .bh .no { flex: 0 0 36px; height: 36px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.bubble .bh .no { flex: 0 0 36px; height: 36px; border-radius: 50%; background: var(--gold); color: #1B1606; display: flex; align-items: center; justify-content: center; font-weight: 700; }
 .bubble .bh b { display: block; font-size: 16px; line-height: 1.3; }
 .bubble .bh small { opacity: .85; font-size: 12px; }
 .bubble .bb { padding: 12px 14px; font-size: 14px; }

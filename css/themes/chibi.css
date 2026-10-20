@@ -1,7 +1,7 @@
 /* ธีม 6 · Chibi Pop (การ์ตูนญี่ปุ่น) */
 @import url("https://fonts.googleapis.com/css2?family=Itim&display=swap");
 :root {
-  --green: #FF6B8B; --green-dark: #E5506F; --btn-text: #ffffff;
+  --green: #FF6B8B; --green-dark: #E5506F; --btn-text: #2B2140;
   --bg: #BFE7FF;
   --bg-image: radial-gradient(rgba(255,255,255,.7) 2px, transparent 2.5px);
   --card: #ffffff; --card-border: 3px solid #2B2140; --card-shadow: 5px 5px 0 #2B2140;
