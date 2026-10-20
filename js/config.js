@@ -4,12 +4,12 @@ const CONFIG = {
   API_URL: "https://wznazkjkmpvfbuznrhhr.supabase.co/functions/v1/quick-action",
 
   // LIFF ID ของแต่ละหน้า (LINE Developers > LINE Login channel > LIFF)
-  LIFF_STUDENT: "2000000000-xxxxxxxx",
-  LIFF_TEACHER: "2000000000-yyyyyyyy",
-  LIFF_ADMIN:   "2000000000-zzzzzzzz",
-  LIFF_FORMS:   "2000000000-ffffffff",   // แบบฟอร์มนักเรียน (ปพ.8 / SDQ / EQ) → forms.html
-  LIFF_CARE:    "2000000000-cccccccc",   // ระบบดูแลช่วยเหลือนักเรียน (ครู) → care.html
-  LIFF_PARENT:  "2000000000-pppppppp",   // หน้าผู้ปกครอง (แพ็กเกจเสริม แจ้งเตือนผู้ปกครอง) → parent.html
+  LIFF_STUDENT: "2012092632-OHiXnQg3",
+  LIFF_TEACHER: "2012092632-cGqOSwyO",
+  LIFF_ADMIN:   "2012092632-gdEV5FDZ",
+  LIFF_FORMS:   "2012092632-feuDU1Lu",   // แบบฟอร์มนักเรียน (ปพ.8 / SDQ / EQ) → forms.html
+  LIFF_CARE:    "2012092632-gdEV5FDZ",   // ระบบดูแลช่วยเหลือนักเรียน (ครู) → care.html
+  LIFF_PARENT:  "2012092632-teGprCYV",   // หน้าผู้ปกครอง (แพ็กเกจเสริม แจ้งเตือนผู้ปกครอง) → parent.html
 
   // LINE OA ของโรงเรียน (Basic ID ขึ้นต้นด้วย @) ใช้สร้างปุ่ม "เพิ่มเพื่อน" ให้ผู้ปกครอง
   LINE_OA_ID: "@698wklbh ",
